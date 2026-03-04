@@ -67,7 +67,7 @@ export function Hero() {
                 <ArrowRight size={18} />
               </Link>
               <a
-                href="tel:18005550199"
+                href="tel:5622431678"
                 className="inline-flex items-center justify-center gap-3 bg-white/6 hover:bg-white/12 border border-white/15 text-text-primary px-8 py-5 rounded-sm font-black text-xs tracking-[0.2em] transition-all uppercase backdrop-blur-sm"
               >
                 Call 24/7 Dispatch

@@ -70,7 +70,7 @@ export function Navbar() {
 
           {/* Desktop CTA */}
           <div className="hidden md:flex items-center gap-4">
-            <a href="tel:18005550199" className="flex items-center gap-2 text-xs font-bold text-text-secondary hover:text-text-primary transition-colors">
+            <a href="tel:5622431678" className="flex items-center gap-2 text-xs font-bold text-text-secondary hover:text-text-primary transition-colors">
               <Phone size={14} className="text-brand-accent" />
               <span>24/7 DISPATCH</span>
             </a>
@@ -118,7 +118,7 @@ export function Navbar() {
               ))}
               <div className="mt-4 flex flex-col gap-3">
                 <a
-                  href="tel:18005550199"
+                  href="tel:5622431678"
                   className="flex items-center justify-center gap-2 bg-surface text-text-primary py-3 rounded-sm font-bold text-sm"
                 >
                   <Phone size={18} className="text-brand-accent" />

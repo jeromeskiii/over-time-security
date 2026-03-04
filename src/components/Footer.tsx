@@ -89,12 +89,12 @@ export function Footer() {
             <h3 className="text-text-primary font-bold tracking-[0.3em] uppercase mb-10 text-[10px]">Command Center</h3>
             <ul className="space-y-6">
               <li>
-                <a href="tel:18005550199" className="flex items-start gap-4 group">
+                <a href="tel:5622431678" className="flex items-start gap-4 group">
                   <div className="bg-surface p-2 rounded-sm border border-white/5 group-hover:border-brand-accent/30 transition-colors">
                     <Phone size={18} className="text-brand-accent" />
                   </div>
                   <div>
-                    <p className="text-text-primary font-black text-xl leading-none">1-800-555-0199</p>
+                    <p className="text-text-primary font-black text-xl leading-none">(562) 243-1678</p>
                     <p className="text-text-secondary text-[10px] uppercase tracking-widest mt-2">24/7 DIRECT LINE</p>
                   </div>
                 </a>

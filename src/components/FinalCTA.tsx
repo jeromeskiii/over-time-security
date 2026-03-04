@@ -46,7 +46,7 @@ export function FinalCTA() {
               <ArrowRight size={17} />
             </Link>
             <a
-              href="tel:18005550199"
+              href="tel:5622431678"
               className="inline-flex items-center justify-center gap-3 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 text-text-primary px-10 py-5 rounded-sm font-black text-xs tracking-[0.2em] transition-all uppercase"
             >
               <Phone size={15} className="text-brand-accent" />

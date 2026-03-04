@@ -68,11 +68,11 @@ export function Contact() {
                   CRITICAL INCIDENT RESPONSE & IMMEDIATE DEPLOYMENT AVAILABLE 24/7/365.
                 </p>
                 <a
-                  href="tel:18005550199"
+                  href="tel:5622431678"
                   className="inline-flex items-center justify-center gap-4 bg-white text-base px-8 py-5 rounded-sm font-black text-xl tracking-[0.1em] w-full transition-all hover:bg-white/90 uppercase"
                 >
                   <Phone size={24} />
-                  1-800-555-0199
+                  (562) 243-1678
                 </a>
               </div>
 
