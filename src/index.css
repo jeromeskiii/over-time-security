@@ -1,0 +1,62 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  
+  /* Dovetail-style Dark System (existing token names preserved) */
+  --color-base: #070b12;
+  --color-surface: #0d131d;
+  --color-navy-dark: var(--color-base);
+  --color-navy: var(--color-surface);
+  --color-navy-light: #151f2d;
+  --color-grid: rgba(255, 255, 255, 0.04);
+  --color-text-primary: #e6e6e6;
+  --color-text-secondary: #9ca3af;
+  --color-brand-accent: #ff6200;
+  --color-brand-accent-hover: #e65800;
+  --color-secondary-accent: #2563eb;
+}
+
+@layer base {
+  body {
+    @apply bg-base text-text-primary font-sans antialiased selection:bg-brand-accent selection:text-white tracking-tight;
+    background-image: 
+      linear-gradient(var(--color-grid) 1px, transparent 1px),
+      linear-gradient(90deg, var(--color-grid) 1px, transparent 1px);
+    background-size: 80px 80px;
+  }
+}
+
+@layer components {
+  .surface-card {
+    @apply bg-surface border border-white/[0.05] rounded-lg p-6;
+  }
+}
+
+@layer utilities {
+  .bg-grid {
+    background-image:
+      linear-gradient(var(--color-grid) 1px, transparent 1px),
+      linear-gradient(90deg, var(--color-grid) 1px, transparent 1px);
+    background-size: 80px 80px;
+  }
+
+  .bg-vignette {
+    background-image: radial-gradient(circle at center, transparent 0%, transparent 55%, rgba(0, 0, 0, 0.55) 100%);
+  }
+}
+
+/* Custom scrollbar for a polished look */
+::-webkit-scrollbar {
+  width: 10px;
+}
+::-webkit-scrollbar-track {
+  @apply bg-base;
+}
+::-webkit-scrollbar-thumb {
+  @apply bg-surface rounded-full;
+}
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-gray-600;
+}
