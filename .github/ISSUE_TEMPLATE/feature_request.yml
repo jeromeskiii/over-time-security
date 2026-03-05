@@ -1,0 +1,47 @@
+name: Feature Request
+description: Suggest a new page, component, or site improvement.
+labels: [enhancement]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Describe the improvement you'd like to see on the Over Time Security site.
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem does this solve?
+      description: What is the current limitation or pain point?
+    validations:
+      required: true
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: Proposed solution
+      description: Describe the feature or change you have in mind.
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: Any other approaches you've thought about?
+    validations:
+      required: false
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - Homepage
+        - Services
+        - Contact / Quote Form
+        - Navigation
+        - SEO / Performance
+        - Accessibility
+        - Other
+    validations:
+      required: true
