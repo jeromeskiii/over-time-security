@@ -18,7 +18,7 @@ const servicesData = {
     ],
     pricing: 'Custom Quote Based on Risk Profile & Hours',
     faqs: [
-      { q: 'Are your armed guards licensed?', a: 'Yes, all armed officers hold active BSIS exposed firearm permits and undergo continuous tactical training.' },
+      { q: 'Are your armed guards licensed?', a: 'Yes, all armed officers hold active firearm permits and undergo continuous tactical training.' },
       { q: 'How quickly can you deploy guards?', a: 'Depending on the location and requirements, we can often deploy emergency unarmed guards within 2-4 hours.' },
       { q: 'Do you provide daily reports?', a: 'Yes, our officers use digital reporting tools to provide real-time updates and daily shift logs.' },
     ]

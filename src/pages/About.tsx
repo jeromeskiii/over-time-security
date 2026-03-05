@@ -65,7 +65,7 @@ export function About() {
                   <div>
                     <h4 className="text-xs font-bold text-text-primary mb-3 tracking-[0.2em] uppercase">LICENSED OPERATORS</h4>
                     <p className="text-text-secondary text-sm leading-relaxed uppercase tracking-wider">
-                      EVERY AGENT IS BSIS-CERTIFIED AND CONTINUOUSLY TRAINED IN ADVANCED PROTECTION PROTOCOLS AND CONFLICT DE-ESCALATION.
+                      EVERY AGENT IS LICENSED AND CONTINUOUSLY TRAINED IN ADVANCED PROTECTION PROTOCOLS AND CONFLICT DE-ESCALATION.
                     </p>
                   </div>
                 </div>
@@ -111,7 +111,7 @@ export function About() {
             </div>
             <div>
               <p className="text-4xl font-black text-brand-accent mb-3 tracking-tighter">100%</p>
-              <p className="text-text-secondary font-bold tracking-[0.2em] uppercase text-[10px]">BSIS CERTIFIED</p>
+              <p className="text-text-secondary font-bold tracking-[0.2em] uppercase text-[10px]">FULLY LICENSED</p>
             </div>
             <div>
               <p className="text-4xl font-black text-brand-accent mb-3 tracking-tighter">CA</p>

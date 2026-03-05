@@ -2,6 +2,7 @@ import { motion } from 'motion/react';
 import { Send, CheckCircle, AlertTriangle } from 'lucide-react';
 import { useState } from 'react';
 import type { FormEvent } from 'react';
+import { submitLead } from '@/lib/leadsApi';
 
 const RATE_LIMIT_KEY = 'ots_quote_last_submit';
 const RATE_LIMIT_MS = 60_000; // 1 submission per 60 seconds
@@ -38,21 +39,12 @@ export function QuoteForm() {
       return;
     }
 
-    const accessKey = import.meta.env.VITE_WEB3FORMS_KEY as string | undefined;
-    if (!accessKey) {
-      console.error('VITE_WEB3FORMS_KEY is not set');
-      setSubmitStatus('error');
-      return;
-    }
-
     const payload = {
-      access_key: accessKey,
-      subject: `New Quote Request — ${formData.get('service') ?? 'Unknown Service'}`,
       name: String(formData.get('name') ?? '').trim(),
       email: String(formData.get('email') ?? '').trim(),
       phone: String(formData.get('phone') ?? '').trim(),
-      service: String(formData.get('service') ?? '').trim(),
-      location: String(formData.get('location') ?? '').trim(),
+      serviceType: String(formData.get('service') ?? '').trim(),
+      company: String(formData.get('location') ?? '').trim(),
       message: String(formData.get('message') ?? '').trim(),
     };
 
@@ -60,15 +52,8 @@ export function QuoteForm() {
     setSubmitStatus('idle');
 
     try {
-      const response = await fetch('https://api.web3forms.com/submit', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-        body: JSON.stringify(payload),
-      });
-
-      const result = (await response.json()) as { success: boolean };
-
-      if (!response.ok || !result.success) {
+      const result = await submitLead(payload);
+      if (!result.ok) {
         throw new Error('Submission rejected by server');
       }
 

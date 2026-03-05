@@ -2,6 +2,8 @@ node_modules
 dist
 dist-ssr
 *.local
+backend/.next
+backend/node_modules
 
 # IDE
 .idea

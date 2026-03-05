@@ -6,9 +6,8 @@ import { cn } from '@/lib/utils';
 
 const navLinks = [
   { name: 'Services', path: '/services' },
-  { name: 'Industries', path: '/#industries' },
+  { name: 'Industries', path: '/industries' },
   { name: 'About', path: '/about' },
-  { name: 'Blog', path: '/#blog' },
   { name: 'Contact', path: '/contact' },
 ];
 
@@ -41,9 +40,9 @@ export function Navbar() {
         <div className="flex items-center justify-between">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2 group">
-            <img src="/images/logoOrange.webp" alt="Over Time Security" className="h-10 w-auto" />
+            <img src="/images/logoOrange.webp" alt="Overtime Security" className="h-10 w-auto" />
             <div className="flex flex-col">
-              <span className="font-black text-xl tracking-tight leading-none text-text-primary">OVER TIME</span>
+              <span className="font-black text-xl tracking-tight leading-none text-text-primary">OVERTIME</span>
               <span className="font-semibold text-[10px] tracking-widest text-brand-accent uppercase leading-none mt-0.5">Security</span>
             </div>
           </Link>

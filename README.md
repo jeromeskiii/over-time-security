@@ -1,10 +1,10 @@
-# Over Time Security
+# Overtime Security
 
 California-based private security firm providing professional protection services for commercial, construction, event, residential, and institutional clients across the state.
 
 ## Overview
 
-Over Time Security is a marketing and lead-generation website built with React, TypeScript, and Vite. It showcases the firm's service capabilities, builds trust through social proof, and drives quote requests via a contact form.
+Overtime Security is a marketing and lead-generation website built with React, TypeScript, and Vite. It showcases the firm's service capabilities, builds trust through social proof, and drives quote requests via a contact form.
 
 ## Tech Stack
 
@@ -17,7 +17,7 @@ Over Time Security is a marketing and lead-generation website built with React, 
 | Animation | Motion (Framer Motion) |
 | Icons | Lucide React |
 | AI Integration | Google Generative AI |
-| Backend (optional) | Express + better-sqlite3 |
+| Backend | Next.js API Routes + Prisma + PostgreSQL |
 
 ## Project Structure
 
@@ -38,6 +38,7 @@ src/
 │   ├── Testimonials.tsx       # Client testimonials carousel
 │   └── TrustBar.tsx           # Trust signals / credential bar
 ├── lib/
+│   ├── leadsApi.ts            # Lead capture API client helper
 │   └── utils.ts               # clsx + tailwind-merge helper
 ├── pages/
 │   ├── About.tsx              # Company background and team
@@ -48,6 +49,12 @@ src/
 ├── App.tsx                    # Router configuration
 ├── main.tsx                   # React entry point
 └── index.css                  # Global styles + Tailwind directives
+
+backend/
+├── prisma/schema.prisma       # Lead model + statuses
+└── src/app/
+    ├── api/leads              # Lead create/list/update API routes
+    └── dashboard              # Sales dashboard UI
 ```
 
 ## Services Covered
@@ -80,12 +87,26 @@ Copy `.env.example` to `.env` and populate required values:
 cp .env.example .env
 ```
 
-### Development
+### Frontend Development
 
 ```bash
 npm run dev
 # Starts Vite dev server at http://localhost:3000
 ```
+
+### Backend Development (Lead Pipeline)
+
+```bash
+cd backend
+npm install
+cp .env.example .env
+npx prisma migrate dev --name init
+npx prisma generate
+npm run dev
+# Starts backend at http://localhost:3001
+```
+
+Sales dashboard: `http://localhost:3001/dashboard`
 
 ### Build
 
@@ -107,4 +128,4 @@ npm run lint
 
 ## License
 
-Private — All rights reserved. Over Time Security.
+Private — All rights reserved. Overtime Security.

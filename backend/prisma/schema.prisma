@@ -1,0 +1,185 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum LeadStatus {
+  NEW       @map("new")
+  CONTACTED @map("contacted")
+  QUOTED    @map("quoted")
+  WON       @map("won")
+  LOST      @map("lost")
+}
+
+enum GuardStatus {
+  ACTIVE
+  INACTIVE
+  SUSPENDED
+}
+
+enum ShiftStatus {
+  SCHEDULED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+enum IncidentSeverity {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+enum IncidentType {
+  THEFT
+  VANDALISM
+  TRESPASS
+  MEDICAL
+  FIRE
+  SUSPICIOUS_ACTIVITY
+  OTHER
+}
+
+model Lead {
+  id          String     @id @default(cuid())
+  name        String
+  email       String
+  phone       String
+  company     String?
+  serviceType String     @map("service_type")
+  message     String
+  status      LeadStatus @default(NEW)
+  createdAt   DateTime   @default(now()) @map("created_at")
+
+  @@map("leads")
+}
+
+model Guard {
+  id            String      @id @default(cuid())
+  name          String
+  licenseNumber String      @unique @map("license_number")
+  phone         String
+  status        GuardStatus @default(ACTIVE)
+  createdAt     DateTime    @default(now()) @map("created_at")
+  shifts        Shift[]
+  incidents     Incident[]
+  checkIns      CheckIn[]
+  patrolLogs    PatrolLog[]
+
+  @@map("guards")
+}
+
+model Client {
+  id        String   @id @default(cuid())
+  name      String
+  email     String?
+  phone     String?
+  createdAt DateTime @default(now()) @map("created_at")
+  sites     Site[]
+
+  @@map("clients")
+}
+
+model Site {
+  id           String      @id @default(cuid())
+  clientId     String      @map("client_id")
+  client       Client      @relation(fields: [clientId], references: [id])
+  location     String
+  instructions String?
+  createdAt    DateTime    @default(now()) @map("created_at")
+  shifts       Shift[]
+  incidents    Incident[]
+  checkIns     CheckIn[]
+  patrolLogs   PatrolLog[]
+
+  @@map("sites")
+}
+
+model Shift {
+  id         String      @id @default(cuid())
+  guardId    String      @map("guard_id")
+  guard      Guard       @relation(fields: [guardId], references: [id])
+  siteId     String      @map("site_id")
+  site       Site        @relation(fields: [siteId], references: [id])
+  startTime  DateTime    @map("start_time")
+  endTime    DateTime    @map("end_time")
+  status     ShiftStatus @default(SCHEDULED)
+  createdAt  DateTime    @default(now()) @map("created_at")
+  checkIns   CheckIn[]
+  patrolLogs PatrolLog[]
+  incidents  Incident[]
+
+  @@map("shifts")
+}
+
+model Incident {
+  id          String           @id @default(cuid())
+  guardId     String           @map("guard_id")
+  guard       Guard            @relation(fields: [guardId], references: [id])
+  siteId      String           @map("site_id")
+  site        Site             @relation(fields: [siteId], references: [id])
+  shiftId     String?          @map("shift_id")
+  shift       Shift?           @relation(fields: [shiftId], references: [id])
+  type        IncidentType     @default(OTHER)
+  description String
+  severity    IncidentSeverity @default(LOW)
+  photoKeys   String[]         @default([]) @map("photo_keys")
+  occurredAt  DateTime         @map("occurred_at")
+  createdAt   DateTime         @default(now()) @map("created_at")
+  report      Report?
+
+  @@map("incidents")
+}
+
+model Report {
+  id         String    @id @default(cuid())
+  incidentId String    @unique @map("incident_id")
+  incident   Incident  @relation(fields: [incidentId], references: [id])
+  content    String
+  pdfKey     String?   @map("pdf_key")
+  sentAt     DateTime? @map("sent_at")
+  sentTo     String?   @map("sent_to")
+  createdAt  DateTime  @default(now()) @map("created_at")
+
+  @@map("reports")
+}
+
+model CheckIn {
+  id        String   @id @default(cuid())
+  shiftId   String   @map("shift_id")
+  shift     Shift    @relation(fields: [shiftId], references: [id])
+  guardId   String   @map("guard_id")
+  guard     Guard    @relation(fields: [guardId], references: [id])
+  siteId    String   @map("site_id")
+  site      Site     @relation(fields: [siteId], references: [id])
+  timestamp DateTime
+  latitude  Float?
+  longitude Float?
+  notes     String?
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("check_ins")
+}
+
+model PatrolLog {
+  id             String   @id @default(cuid())
+  shiftId        String   @map("shift_id")
+  shift          Shift    @relation(fields: [shiftId], references: [id])
+  guardId        String   @map("guard_id")
+  guard          Guard    @relation(fields: [guardId], references: [id])
+  siteId         String   @map("site_id")
+  site           Site     @relation(fields: [siteId], references: [id])
+  checkpointName String   @map("checkpoint_name")
+  timestamp      DateTime
+  latitude       Float?
+  longitude      Float?
+  notes          String?
+  createdAt      DateTime @default(now()) @map("created_at")
+
+  @@map("patrol_logs")
+}
