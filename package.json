@@ -3,38 +3,27 @@
   "private": true,
   "version": "0.0.0",
   "license": "UNLICENSED",
-  "type": "module",
+  "packageManager": "pnpm@10.0.0",
   "scripts": {
-    "dev": "vite --port=3000 --host=0.0.0.0",
-    "build": "vite build",
-    "preview": "vite preview",
-    "clean": "rm -rf dist",
-    "lint": "tsc --noEmit",
-    "start": "node server.js",
-    "backend:dev": "npm --prefix backend run dev",
-    "backend:build": "npm --prefix backend run build",
-    "backend:lint": "npm --prefix backend run lint"
-  },
-  "dependencies": {
-    "@tailwindcss/vite": "^4.1.14",
-    "@vitejs/plugin-react": "^5.0.4",
-    "clsx": "^2.1.1",
-    "express": "^5.2.1",
-    "lucide-react": "^0.546.0",
-    "motion": "^12.23.24",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0",
-    "react-router-dom": "^7.13.1",
-    "tailwind-merge": "^3.5.0",
-    "vite": "^6.2.0"
+    "dev": "turbo dev",
+    "dev:web": "turbo dev --filter=@ots/web",
+    "dev:ops": "turbo dev --filter=@ots/ops",
+    "dev:guard": "turbo dev --filter=@ots/guard",
+    "build": "turbo build",
+    "lint": "turbo lint",
+    "typecheck": "turbo typecheck",
+    "clean": "turbo clean && rm -rf node_modules",
+    "db:generate": "turbo db:generate --filter=@ots/db",
+    "db:migrate": "turbo db:migrate --filter=@ots/db",
+    "db:push": "turbo db:push --filter=@ots/db",
+    "db:studio": "turbo db:studio --filter=@ots/db",
+    "db:seed": "turbo db:seed --filter=@ots/db",
+    "workers": "pnpm --filter @ots/automation run workers",
+    "workers:dev": "pnpm --filter @ots/automation run workers:dev",
+    "test": "turbo test"
   },
   "devDependencies": {
-    "@types/express": "^4.17.21",
-    "@types/node": "^22.14.0",
-    "autoprefixer": "^10.4.21",
-    "tailwindcss": "^4.1.14",
-    "tsx": "^4.21.0",
-    "typescript": "~5.8.2",
-    "vite": "^6.2.0"
+    "turbo": "^2.4.0",
+    "typescript": "^5.8.2"
   }
 }

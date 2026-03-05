@@ -1,0 +1,7 @@
+{
+  "name": "@ots/eslint-config",
+  "version": "0.0.0",
+  "private": true,
+  "main": "index.js",
+  "files": ["index.js", "next.js", "react.js"]
+}

@@ -1,131 +1,123 @@
-# Overtime Security
+# Over Time Security
 
 California-based private security firm providing professional protection services for commercial, construction, event, residential, and institutional clients across the state.
 
 ## Overview
 
-Overtime Security is a marketing and lead-generation website built with React, TypeScript, and Vite. It showcases the firm's service capabilities, builds trust through social proof, and drives quote requests via a contact form.
+This is a monorepo containing all applications and shared packages for Over Time Security.
 
 ## Tech Stack
 
 | Layer | Technology |
-|---|---|
-| Framework | React 19 + TypeScript |
-| Build Tool | Vite 6 |
+|-------|------------|
+| Framework | Next.js 15 (App Router) |
+| Language | TypeScript 5.8 |
 | Styling | Tailwind CSS v4 |
-| Routing | React Router DOM v7 |
+| Database | PostgreSQL + Prisma |
+| Monorepo | pnpm + Turborepo |
 | Animation | Motion (Framer Motion) |
 | Icons | Lucide React |
-| AI Integration | Google Generative AI |
-| Backend | Next.js API Routes + Prisma + PostgreSQL |
 
 ## Project Structure
 
 ```
-src/
-├── components/
-│   ├── layout/
-│   │   ├── Layout.tsx         # Page shell with Navbar + Footer
-│   │   └── MobileCTA.tsx      # Sticky mobile call-to-action bar
-│   ├── FeatureSection.tsx     # Why choose us / differentiators
-│   ├── Footer.tsx             # Site-wide footer
-│   ├── Hero.tsx               # Landing hero with animated nodes
-│   ├── IndustryGrid.tsx       # Industries served grid
-│   ├── Navbar.tsx             # Responsive top navigation
-│   ├── QuoteForm.tsx          # Lead capture form
-│   ├── ScrollToTop.tsx        # Scroll restoration on route change
-│   ├── ServicesGrid.tsx       # Services overview grid
-│   ├── Testimonials.tsx       # Client testimonials carousel
-│   └── TrustBar.tsx           # Trust signals / credential bar
-├── lib/
-│   ├── leadsApi.ts            # Lead capture API client helper
-│   └── utils.ts               # clsx + tailwind-merge helper
-├── pages/
-│   ├── About.tsx              # Company background and team
-│   ├── Contact.tsx            # Contact page with quote form
-│   ├── Home.tsx               # Homepage composition
-│   ├── ServiceDetail.tsx      # Dynamic service detail pages
-│   └── Services.tsx           # All services overview
-├── App.tsx                    # Router configuration
-├── main.tsx                   # React entry point
-└── index.css                  # Global styles + Tailwind directives
-
-backend/
-├── prisma/schema.prisma       # Lead model + statuses
-└── src/app/
-    ├── api/leads              # Lead create/list/update API routes
-    └── dashboard              # Sales dashboard UI
+over-time-security/
+├── apps/
+│   ├── web/              # Marketing site (port 3000)
+│   ├── ops/              # Operations portal (port 3001)
+│   └── guard/            # Guard mobile PWA (port 3002)
+├── packages/
+│   ├── db/               # Prisma schema + client
+│   ├── domain/           # Types, validators, policies
+│   ├── ui/               # Shared components + tokens
+│   └── automation/       # Jobs, workflows, AI
+├── tooling/
+│   ├── eslint/
+│   ├── tsconfig/
+│   └── tailwind/
+├── docker/
+│   ├── postgres/
+│   └── redis/
+└── docs/
+    ├── PRD.md
+    ├── RUNBOOK.md
+    ├── ARCHITECTURE.md
+    ├── SECURITY.md
+    └── STYLEGUIDE.md
 ```
 
-## Services Covered
+## Applications
 
-- **Armed & Unarmed Security** — Critical asset and facility protection
-- **Mobile Patrols** — GPS-tracked randomized vehicular patrols
-- **Fire Watch** — NFPA-compliant monitoring for impaired fire systems
-- **Event Security** — Crowd management for large-scale events
-- **Executive Protection** — Close protection for high-value individuals
-- **Construction Security** — Job site vandalism deterrence and material protection
+| App | Port | Description |
+|-----|------|-------------|
+| `web` | 3000 | Public marketing site |
+| `ops` | 3001 | Admin/supervisor/client portal |
+| `guard` | 3002 | Guard mobile PWA |
 
 ## Getting Started
 
 ### Prerequisites
 
-- Node.js 18+
-- npm 9+
+- Node.js 20+
+- pnpm 10+
+- PostgreSQL 15+ (or use Docker)
 
 ### Install
 
 ```bash
-npm install
+pnpm install
 ```
 
 ### Environment Variables
 
-Copy `.env.example` to `.env` and populate required values:
-
 ```bash
 cp .env.example .env
 ```
 
-### Frontend Development
+### Database Setup
 
 ```bash
-npm run dev
-# Starts Vite dev server at http://localhost:3000
+# Start PostgreSQL via Docker (optional)
+cd docker && docker-compose up -d
+
+# Generate Prisma client
+pnpm db:generate
+
+# Run migrations
+pnpm db:migrate
 ```
 
-### Backend Development (Lead Pipeline)
+### Development
 
 ```bash
-cd backend
-npm install
-cp .env.example .env
-npx prisma migrate dev --name init
-npx prisma generate
-npm run dev
-# Starts backend at http://localhost:3001
-```
+# Start all apps
+pnpm dev
 
-Sales dashboard: `http://localhost:3001/dashboard`
+# Start specific app
+pnpm dev:web    # Marketing site
+pnpm dev:ops    # Operations portal
+pnpm dev:guard  # Guard mobile app
+```
 
 ### Build
 
 ```bash
-npm run build
-```
-
-### Preview Production Build
-
-```bash
-npm run preview
+pnpm build
 ```
 
 ### Type Check
 
 ```bash
-npm run lint
+pnpm typecheck
 ```
+
+## Architecture Rules
+
+1. **`packages/domain`** has no UI dependencies — pure TypeScript with business logic
+2. **`packages/ui`** has no business logic — presentational components only
+3. **Apps import from packages, never from other apps**
+4. **Database access only through `@ots/db` package**
 
 ## License
 
-Private — All rights reserved. Overtime Security.
+Private — All rights reserved. Over Time Security.
