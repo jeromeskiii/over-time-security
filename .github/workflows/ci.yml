@@ -28,7 +28,7 @@ jobs:
       # On a cache hit the generate step is skipped, saving ~10-15s per job.
       - name: Cache Prisma generated client
         id: prisma-cache
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: '**/node_modules/.prisma'
           key: prisma-${{ runner.os }}-${{ hashFiles('packages/db/prisma/schema.prisma') }}
@@ -58,7 +58,7 @@ jobs:
       # On a cache hit the generate step is skipped, saving ~10-15s per job.
       - name: Cache Prisma generated client
         id: prisma-cache
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: '**/node_modules/.prisma'
           key: prisma-${{ runner.os }}-${{ hashFiles('packages/db/prisma/schema.prisma') }}
