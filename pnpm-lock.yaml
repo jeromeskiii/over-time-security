@@ -55,7 +55,7 @@ importers:
         specifier: ^8.57.1
         version: 8.57.1
       eslint-config-next:
-        specifier: ^15.5.12
+        specifier: 15.5.12
         version: 15.5.12(eslint@8.57.1)(typescript@5.9.3)
       postcss:
         specifier: ^8.4.49
@@ -131,7 +131,7 @@ importers:
         specifier: ^8.57.1
         version: 8.57.1
       eslint-config-next:
-        specifier: ^15
+        specifier: 15.5.12
         version: 15.5.12(eslint@8.57.1)(typescript@5.9.3)
       postcss:
         specifier: ^8.4.49
@@ -186,7 +186,7 @@ importers:
         specifier: ^8.57.1
         version: 8.57.1
       eslint-config-next:
-        specifier: ^15
+        specifier: 15.5.12
         version: 15.5.12(eslint@8.57.1)(typescript@5.9.3)
       postcss:
         specifier: ^8.4.49

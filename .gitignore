@@ -46,10 +46,10 @@ pnpm-debug.log*
 coverage
 
 # Old structure (to be removed)
-backend/
-src/
-public/
-index.html
-server.js
-vite.config.ts
-AGENTS.md
+/backend/
+/src/
+/public/
+/index.html
+/server.js
+/vite.config.ts
+/AGENTS.md

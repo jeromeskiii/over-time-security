@@ -1,8 +1,19 @@
-import { motion } from 'motion/react';
+import { motion, useReducedMotion } from 'motion/react';
 import { Link } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
 
+const floatingNodes = [
+  { left: '12%', top: '24%', duration: 8 },
+  { left: '26%', top: '68%', duration: 10 },
+  { left: '41%', top: '18%', duration: 7 },
+  { left: '58%', top: '62%', duration: 9 },
+  { left: '74%', top: '28%', duration: 11 },
+  { left: '86%', top: '74%', duration: 8.5 },
+];
+
 export function Hero() {
+  const reducedMotion = useReducedMotion();
+
   return (
     <section className="relative min-h-[95vh] flex items-center justify-center overflow-hidden bg-base">
       <img
@@ -15,20 +26,20 @@ export function Hero() {
 
       {/* Subtle Floating Nodes */}
       <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
-        {[...Array(6)].map((_, i) => (
+        {floatingNodes.map((node, i) => (
           <motion.div
             key={i}
             className="absolute w-1 h-1 bg-brand-accent/20 rounded-full"
             initial={{
-              x: Math.random() * 100 + '%',
-              y: Math.random() * 100 + '%',
+              x: node.left,
+              y: node.top,
             }}
-            animate={{
+            animate={reducedMotion ? { opacity: 0.25 } : {
               y: ['-10%', '10%'],
               opacity: [0.2, 0.5, 0.2],
             }}
-            transition={{
-              duration: 5 + Math.random() * 5,
+            transition={reducedMotion ? undefined : {
+              duration: node.duration,
               repeat: Infinity,
               ease: 'linear',
             }}
@@ -86,8 +97,8 @@ export function Hero() {
               {/* Outer Orbit */}
               <motion.div
                 className="absolute w-[340px] h-[340px] border border-white/10 rounded-full"
-                animate={{ rotate: 360 }}
-                transition={{ duration: 40, repeat: Infinity, ease: "linear" }}
+                animate={reducedMotion ? undefined : { rotate: 360 }}
+                transition={reducedMotion ? undefined : { duration: 40, repeat: Infinity, ease: "linear" }}
               >
                 <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-2 h-2 bg-white/50 rounded-full" />
                 <div className="absolute bottom-1/4 right-0 translate-x-1/2 translate-y-1/2 w-1.5 h-1.5 bg-white/30 rounded-full" />
@@ -96,8 +107,8 @@ export function Hero() {
               {/* Inner Orbit */}
               <motion.div
                 className="absolute w-[220px] h-[220px] border border-brand-accent/40 rounded-full"
-                animate={{ rotate: -360 }}
-                transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
+                animate={reducedMotion ? undefined : { rotate: -360 }}
+                transition={reducedMotion ? undefined : { duration: 25, repeat: Infinity, ease: "linear" }}
               >
                 <div className="absolute top-1/4 right-0 translate-x-1/2 -translate-y-1/2 w-2 h-2 bg-brand-accent rounded-full shadow-[0_0_10px_rgba(255,98,0,0.8)]" />
               </motion.div>
@@ -110,8 +121,8 @@ export function Hero() {
                   strokeWidth="1"
                   fill="none"
                   initial={{ pathLength: 0, opacity: 0 }}
-                  animate={{ pathLength: 1, opacity: 0.5 }}
-                  transition={{ duration: 3, repeat: Infinity, ease: 'linear' }}
+                  animate={reducedMotion ? { pathLength: 1, opacity: 0.35 } : { pathLength: 1, opacity: 0.5 }}
+                  transition={reducedMotion ? { duration: 0.3 } : { duration: 3, repeat: Infinity, ease: 'linear' }}
                 />
                 <motion.path
                   d="M 370 100 L 280 100 L 210 170"
@@ -119,13 +130,13 @@ export function Hero() {
                   strokeWidth="1"
                   fill="none"
                   initial={{ pathLength: 0, opacity: 0 }}
-                  animate={{ pathLength: 1, opacity: 0.3 }}
-                  transition={{ duration: 4, repeat: Infinity, ease: 'linear', delay: 1 }}
+                  animate={reducedMotion ? { pathLength: 1, opacity: 0.2 } : { pathLength: 1, opacity: 0.3 }}
+                  transition={reducedMotion ? { duration: 0.3 } : { duration: 4, repeat: Infinity, ease: 'linear', delay: 1 }}
                 />
               </svg>
 
               {/* Center Dot */}
-              <div className="absolute w-4 h-4 bg-brand-accent rounded-full shadow-[0_0_20px_rgba(255,98,0,1)] animate-pulse" />
+              <div className={`absolute w-4 h-4 bg-brand-accent rounded-full shadow-[0_0_20px_rgba(255,98,0,1)] ${reducedMotion ? '' : 'animate-pulse'}`} />
               
               {/* Tactical Stats Overlay */}
               <div className="absolute top-10 right-4 space-y-4">

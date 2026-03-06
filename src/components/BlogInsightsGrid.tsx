@@ -1,4 +1,5 @@
 import { motion } from 'motion/react';
+import { Link } from 'react-router-dom';
 import { Newspaper } from 'lucide-react';
 
 const insights = [
@@ -71,7 +72,6 @@ export function BlogInsightsGrid() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.4, delay: index * 0.08, ease: [0.16, 1, 0.3, 1] }}
-              whileHover={{ y: -4 }}
               className="group bg-surface border border-white/5 hover:border-brand-accent/40 transition-all duration-500 rounded-sm overflow-hidden"
             >
               <div className="relative aspect-[16/10] overflow-hidden">
@@ -91,6 +91,12 @@ export function BlogInsightsGrid() {
                 <h3 className="text-text-primary font-black text-[20px] leading-tight tracking-tight uppercase">
                   {post.title}
                 </h3>
+                <Link
+                  to={`/contact?briefing=${post.id}`}
+                  className="mt-6 inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-brand-accent transition-transform group-hover:translate-x-1"
+                >
+                  Request this briefing
+                </Link>
               </div>
             </motion.article>
           ))}

@@ -3,6 +3,7 @@ type LeadCreatePayload = {
   email: string;
   phone: string;
   company?: string;
+  location?: string;
   serviceType: string;
   message: string;
 };

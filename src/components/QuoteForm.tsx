@@ -44,7 +44,7 @@ export function QuoteForm() {
       email: String(formData.get('email') ?? '').trim(),
       phone: String(formData.get('phone') ?? '').trim(),
       serviceType: String(formData.get('service') ?? '').trim(),
-      company: String(formData.get('location') ?? '').trim(),
+      location: String(formData.get('location') ?? '').trim(),
       message: String(formData.get('message') ?? '').trim(),
     };
 

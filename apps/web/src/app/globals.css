@@ -1,0 +1,114 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+
+  --color-base: #05070a;
+  --color-surface: #0b0f14;
+  --color-text-primary: #e6e6e6;
+  --color-text-secondary: #9ca3af;
+  --color-brand-accent: #ff6200;
+  --color-brand-accent-hover: #e65800;
+  --color-secondary-accent: #2563eb;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  color: var(--color-text-primary);
+  background-color: var(--color-base);
+  background-image:
+    radial-gradient(circle at 12% 18%, rgba(255, 98, 0, 0.12), transparent 30%),
+    radial-gradient(circle at 88% 10%, rgba(37, 99, 235, 0.08), transparent 28%),
+    linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+  background-size: 80px 80px;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(180deg, rgba(5, 7, 10, 0.16), rgba(5, 7, 10, 0.72)),
+    radial-gradient(circle at center, transparent 38%, rgba(5, 7, 10, 0.6) 100%);
+  z-index: -1;
+}
+
+::selection {
+  background: rgba(255, 98, 0, 0.28);
+  color: white;
+}
+
+:where(a, button, input, textarea, select):focus-visible {
+  outline: 2px solid rgba(255, 98, 0, 0.9);
+  outline-offset: 3px;
+}
+
+.signal-panel {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.01)),
+    rgba(11, 15, 20, 0.82);
+  backdrop-filter: blur(20px);
+}
+
+.signal-panel::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(90deg, transparent 0%, rgba(255, 98, 0, 0.12) 50%, transparent 100%);
+  transform: translateX(-100%);
+  animation: signal-sweep 7s linear infinite;
+  pointer-events: none;
+}
+
+.signal-grid {
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.06) 1px, transparent 1px);
+  background-size: 32px 32px;
+}
+
+.section-anchor {
+  scroll-margin-top: 112px;
+}
+
+@keyframes signal-sweep {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes soft-float {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(0, -10px, 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
