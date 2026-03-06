@@ -40,7 +40,6 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
-AGENTS.md
 
 # TypeScript
 *.tsbuildinfo
@@ -51,3 +50,4 @@ coverage
 # Local deploy tooling (machine-specific, never commit)
 ecosystem.config.cjs
 webhook.log
+.vercel

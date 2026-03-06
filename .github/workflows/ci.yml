@@ -6,6 +6,10 @@ on:
   pull_request:
     branches: [main]
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   workspace-quality:
     name: Workspace Quality
@@ -47,6 +51,9 @@ jobs:
 
       - name: Automation Type Check
         run: pnpm --filter @ots/automation typecheck
+
+      - name: Lint
+        run: pnpm lint
 
   web-typecheck:
     name: Web Type Check

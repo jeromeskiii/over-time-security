@@ -1,0 +1,16 @@
+# Code Owners
+# https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+
+# Default owner for everything
+* @jm1
+
+# Database schema changes require review
+/packages/db/prisma/schema.prisma @jm1
+
+# CI/CD changes require review
+/.github/workflows/ @jm1
+
+# Security-related files
+/SECURITY.md @jm1
+/docs/SECURITY.md @jm1
+/.env.example @jm1
