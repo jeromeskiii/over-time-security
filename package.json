@@ -26,6 +26,7 @@
     "test": "turbo test"
   },
   "devDependencies": {
+    "tailwindcss": "^4.1.14",
     "turbo": "^2.4.0",
     "typescript": "^5.8.2"
   }
