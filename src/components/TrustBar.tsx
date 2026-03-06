@@ -1,11 +1,11 @@
 import { motion } from 'motion/react';
 
 const trustSignals = [
-  "BSIS Licensed",
   "Veteran Led",
   "24/7 Dispatch",
   "Fully Insured",
-  "California Statewide"
+  "California Statewide",
+  "Rapid Response"
 ];
 
 export function TrustBar() {

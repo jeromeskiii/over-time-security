@@ -17,7 +17,9 @@
 
 ## Checklist
 
-- [ ] Type check passes (`npm run lint`)
+- [ ] Type check passes (`npm run typecheck`)
 - [ ] Build succeeds (`npm run build`)
 - [ ] No new console errors or warnings
 - [ ] `.env.example` updated if new env vars introduced
+- [ ] DB migration included (if schema changed)
+- [ ] No `console.log` left in

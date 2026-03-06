@@ -26,6 +26,11 @@
       linear-gradient(90deg, var(--color-grid) 1px, transparent 1px);
     background-size: 80px 80px;
   }
+
+  :where(a, button, input, textarea, select):focus-visible {
+    outline: 2px solid rgba(255, 98, 0, 0.9);
+    outline-offset: 3px;
+  }
 }
 
 @layer components {
@@ -59,4 +64,18 @@
 }
 ::-webkit-scrollbar-thumb:hover {
   @apply bg-gray-600;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }

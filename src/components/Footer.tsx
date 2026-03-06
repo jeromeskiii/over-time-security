@@ -14,7 +14,7 @@ export function Footer() {
   return (
     <footer className="bg-base border-t border-white/5 pt-20 pb-10">
       <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-16 mb-20">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-16 mb-20">
           {/* Brand */}
           <div className="space-y-8">
             <Link to="/" className="flex items-center gap-2 group inline-flex">
@@ -22,19 +22,19 @@ export function Footer() {
                 <ShieldAlert size={24} strokeWidth={2.5} />
               </div>
               <div className="flex flex-col">
-                <span className="font-black text-xl tracking-tight leading-none text-text-primary">OVER TIME</span>
+                <span className="font-black text-xl tracking-tight leading-none text-text-primary">OVERTIME</span>
                 <span className="font-semibold text-[10px] tracking-widest text-brand-accent uppercase leading-none mt-0.5">Security</span>
               </div>
             </Link>
             <p className="text-text-secondary text-xs leading-relaxed uppercase tracking-wider">
-              VETERAN-LED PRIVATE SECURITY INFRASTRUCTURE DELIVERING FAST, TACTICAL PROTECTION ACROSS CALIFORNIA. BSIS-TRAINED OPERATORS, 24/7 COMMAND CENTER.
+              VETERAN-LED PRIVATE SECURITY INFRASTRUCTURE DELIVERING FAST, TACTICAL PROTECTION ACROSS CALIFORNIA. 24/7 COMMAND CENTER.
             </p>
             <div className="flex flex-col gap-3">
               <span className="bg-surface text-text-primary text-[10px] font-bold px-4 py-2 rounded-sm border border-white/10 tracking-[0.2em] uppercase text-center">
-                BSIS LICENSED PPO #120934
+                VETERAN-LED OPERATIONS
               </span>
               <span className="bg-surface text-text-primary text-[10px] font-bold px-4 py-2 rounded-sm border border-white/10 tracking-[0.2em] uppercase text-center">
-                VETERAN-LED OPERATIONS
+                FULLY INSURED & BONDED
               </span>
             </div>
           </div>
@@ -77,8 +77,44 @@ export function Footer() {
                 </Link>
               </li>
               <li>
+                <Link to="/industries" className="text-text-secondary hover:text-brand-accent text-xs font-bold uppercase tracking-widest transition-colors">
+                  INDUSTRIES
+                </Link>
+              </li>
+              <li>
                 <Link to="/services/fire-watch" className="text-text-secondary hover:text-brand-accent text-xs font-bold uppercase tracking-widest transition-colors">
                   FIRE WATCH
+                </Link>
+              </li>
+            </ul>
+          </div>
+
+          {/* Service Areas */}
+          <div>
+            <h3 className="text-text-primary font-bold tracking-[0.3em] uppercase mb-10 text-[10px]">Service Areas</h3>
+            <ul className="space-y-4">
+              <li>
+                <Link to="/security-guards-los-angeles" className="text-text-secondary hover:text-brand-accent text-xs font-bold uppercase tracking-widest transition-colors flex items-center gap-2 group">
+                  <ArrowRight size={14} className="text-brand-accent opacity-0 -ml-4 group-hover:opacity-100 group-hover:ml-0 transition-all" />
+                  LOS ANGELES
+                </Link>
+              </li>
+              <li>
+                <Link to="/security-guards-orange-county" className="text-text-secondary hover:text-brand-accent text-xs font-bold uppercase tracking-widest transition-colors flex items-center gap-2 group">
+                  <ArrowRight size={14} className="text-brand-accent opacity-0 -ml-4 group-hover:opacity-100 group-hover:ml-0 transition-all" />
+                  ORANGE COUNTY
+                </Link>
+              </li>
+              <li>
+                <Link to="/security-guards-long-beach" className="text-text-secondary hover:text-brand-accent text-xs font-bold uppercase tracking-widest transition-colors flex items-center gap-2 group">
+                  <ArrowRight size={14} className="text-brand-accent opacity-0 -ml-4 group-hover:opacity-100 group-hover:ml-0 transition-all" />
+                  LONG BEACH
+                </Link>
+              </li>
+              <li>
+                <Link to="/security-guards-riverside" className="text-text-secondary hover:text-brand-accent text-xs font-bold uppercase tracking-widest transition-colors flex items-center gap-2 group">
+                  <ArrowRight size={14} className="text-brand-accent opacity-0 -ml-4 group-hover:opacity-100 group-hover:ml-0 transition-all" />
+                  RIVERSIDE
                 </Link>
               </li>
             </ul>
@@ -123,11 +159,11 @@ export function Footer() {
 
         <div className="border-t border-white/5 pt-10 flex flex-col md:flex-row items-center justify-between gap-6">
           <p className="text-text-secondary text-[10px] font-bold tracking-[0.2em] uppercase">
-            &copy; {new Date().getFullYear()} OVER TIME SECURITY. ALL SYSTEMS PROTECTED.
+            &copy; {new Date().getFullYear()} OVERTIME SECURITY. ALL SYSTEMS PROTECTED.
           </p>
           <div className="h-px w-12 bg-white/10 hidden md:block"></div>
           <p className="text-text-secondary text-[10px] font-bold tracking-[0.2em] uppercase">
-            CALIFORNIA BSIS PPO LICENSE #120934
+            SERVING ALL OF CALIFORNIA
           </p>
         </div>
       </div>

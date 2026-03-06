@@ -40,4 +40,29 @@
     <loc>https://overtimesecurity.com/services/site-specific</loc>
     <lastmod>2026-03-04</lastmod>
   </url>
+  <url>
+    <loc>https://overtimesecurity.com/industries</loc>
+    <lastmod>2026-03-04</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://overtimesecurity.com/security-guards-los-angeles</loc>
+    <lastmod>2026-03-04</lastmod>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://overtimesecurity.com/security-guards-orange-county</loc>
+    <lastmod>2026-03-04</lastmod>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://overtimesecurity.com/security-guards-long-beach</loc>
+    <lastmod>2026-03-04</lastmod>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://overtimesecurity.com/security-guards-riverside</loc>
+    <lastmod>2026-03-04</lastmod>
+    <priority>0.7</priority>
+  </url>
 </urlset>

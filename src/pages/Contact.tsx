@@ -1,19 +1,39 @@
 import React, { useState } from 'react';
 import { motion } from 'motion/react';
-import { Phone, Mail, MapPin, Send, ShieldAlert } from 'lucide-react';
+import { Phone, Mail, MapPin, Send, ShieldAlert, AlertTriangle } from 'lucide-react';
+import { submitLead } from '@/lib/leadsApi';
 
 export function Contact() {
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isSuccess, setIsSuccess] = useState(false);
+  const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    const form = e.currentTarget;
+    const formData = new FormData(form);
+
     setIsSubmitting(true);
-    // Simulate form submission
-    setTimeout(() => {
-      setIsSubmitting(false);
-      setIsSuccess(true);
-    }, 1500);
+    setSubmitStatus('idle');
+
+    const payload = {
+      name: String(formData.get('name') ?? '').trim(),
+      email: String(formData.get('email') ?? '').trim(),
+      phone: String(formData.get('phone') ?? '').trim(),
+      company: String(formData.get('company') ?? '').trim() || undefined,
+      serviceType: String(formData.get('service') ?? '').trim(),
+      message: String(formData.get('message') ?? '').trim(),
+    };
+
+    const result = await submitLead(payload);
+    setIsSubmitting(false);
+
+    if (!result.ok) {
+      setSubmitStatus('error');
+      return;
+    }
+
+    setSubmitStatus('success');
+    form.reset();
   };
 
   return (
@@ -107,7 +127,7 @@ export function Contact() {
               <h3 className="text-2xl font-black text-text-primary tracking-tighter mb-4 uppercase">INITIALIZE QUOTE</h3>
               <p className="text-text-secondary text-xs mb-12 uppercase tracking-[0.2em] font-bold">TRANSMIT PROJECT PARAMETERS FOR ANALYSIS.</p>
 
-              {isSuccess ? (
+              {submitStatus === 'success' ? (
                 <motion.div
                   initial={{ opacity: 0, scale: 0.95 }}
                   animate={{ opacity: 1, scale: 1 }}
@@ -129,6 +149,7 @@ export function Contact() {
                       <input
                         type="text"
                         id="name"
+                        name="name"
                         required
                         className="w-full bg-base border border-white/10 rounded-sm px-4 py-4 text-text-primary placeholder-white/10 focus:outline-none focus:border-brand-accent focus:ring-0 transition-colors text-xs font-bold uppercase tracking-widest"
                         placeholder="FULL NAME"
@@ -139,6 +160,7 @@ export function Contact() {
                       <input
                         type="tel"
                         id="phone"
+                        name="phone"
                         required
                         className="w-full bg-base border border-white/10 rounded-sm px-4 py-4 text-text-primary placeholder-white/10 focus:outline-none focus:border-brand-accent focus:ring-0 transition-colors text-xs font-bold uppercase tracking-widest"
                         placeholder="PHONE NUMBER"
@@ -151,6 +173,7 @@ export function Contact() {
                     <input
                       type="email"
                       id="email"
+                      name="email"
                       required
                       className="w-full bg-base border border-white/10 rounded-sm px-4 py-4 text-text-primary placeholder-white/10 focus:outline-none focus:border-brand-accent focus:ring-0 transition-colors text-xs font-bold uppercase tracking-widest"
                       placeholder="EMAIL ADDRESS"
@@ -162,10 +185,12 @@ export function Contact() {
                     <div className="relative">
                       <select
                         id="service"
+                        name="service"
                         required
                         className="w-full bg-base border border-white/10 rounded-sm px-4 py-4 text-text-primary focus:outline-none focus:border-brand-accent focus:ring-0 transition-colors appearance-none text-xs font-bold uppercase tracking-widest"
+                        defaultValue=""
                       >
-                        <option value="" disabled selected>SELECT MODULE...</option>
+                        <option value="" disabled>SELECT MODULE...</option>
                         <option value="armed">ARMED & UNARMED GUARDS</option>
                         <option value="patrol">MOBILE PATROLS</option>
                         <option value="firewatch">FIRE WATCH</option>
@@ -183,12 +208,33 @@ export function Contact() {
                     <label htmlFor="message" className="text-[10px] font-black text-text-secondary uppercase tracking-[0.2em]">MISSION PARAMETERS</label>
                     <textarea
                       id="message"
+                      name="message"
                       required
                       rows={4}
                       className="w-full bg-base border border-white/10 rounded-sm px-4 py-4 text-text-primary placeholder-white/10 focus:outline-none focus:border-brand-accent focus:ring-0 transition-colors resize-none text-xs font-bold uppercase tracking-widest"
                       placeholder="DETAILED PROJECT REQUIREMENTS..."
                     ></textarea>
                   </div>
+
+                  <div className="space-y-3">
+                    <label htmlFor="company" className="text-[10px] font-black text-text-secondary uppercase tracking-[0.2em]">COMPANY (OPTIONAL)</label>
+                    <input
+                      type="text"
+                      id="company"
+                      name="company"
+                      className="w-full bg-base border border-white/10 rounded-sm px-4 py-4 text-text-primary placeholder-white/10 focus:outline-none focus:border-brand-accent focus:ring-0 transition-colors text-xs font-bold uppercase tracking-widest"
+                      placeholder="COMPANY NAME"
+                    />
+                  </div>
+
+                  {submitStatus === 'error' && (
+                    <div className="flex items-center gap-2 text-red-400">
+                      <AlertTriangle size={14} strokeWidth={2} />
+                      <p className="text-[10px] font-black uppercase tracking-[0.2em]">
+                        Transmission failed. Please try again.
+                      </p>
+                    </div>
+                  )}
 
                   <button
                     type="submit"

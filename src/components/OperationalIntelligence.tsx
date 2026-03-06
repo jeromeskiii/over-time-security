@@ -23,7 +23,7 @@ function DashboardMockup() {
         <span className="w-2 h-2 rounded-full bg-red-500/70" />
         <span className="w-2 h-2 rounded-full bg-yellow-500/70" />
         <span className="w-2 h-2 rounded-full bg-green-500/70" />
-        <span className="ml-3 text-text-secondary text-[11px] tracking-wider">Over Time Security Portal</span>
+        <span className="ml-3 text-text-secondary text-[11px] tracking-wider">Overtime Security Portal</span>
       </div>
 
       <div className="p-4 space-y-3">

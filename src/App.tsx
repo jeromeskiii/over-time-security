@@ -10,6 +10,11 @@ import { About } from './pages/About';
 import { Contact } from './pages/Contact';
 import { Services } from './pages/Services';
 import { ServiceDetail } from './pages/ServiceDetail';
+import { Industries } from './pages/Industries';
+import { LosAngeles } from './pages/locations/LosAngeles';
+import { OrangeCounty } from './pages/locations/OrangeCounty';
+import { LongBeach } from './pages/locations/LongBeach';
+import { Riverside } from './pages/locations/Riverside';
 import { NotFound } from './pages/NotFound';
 
 export default function App() {
@@ -22,6 +27,11 @@ export default function App() {
           <Route path="contact" element={<Contact />} />
           <Route path="services" element={<Services />} />
           <Route path="services/:id" element={<ServiceDetail />} />
+          <Route path="industries" element={<Industries />} />
+          <Route path="security-guards-los-angeles" element={<LosAngeles />} />
+          <Route path="security-guards-orange-county" element={<OrangeCounty />} />
+          <Route path="security-guards-long-beach" element={<LongBeach />} />
+          <Route path="security-guards-riverside" element={<Riverside />} />
           <Route path="*" element={<NotFound />} />
         </Route>
       </Routes>

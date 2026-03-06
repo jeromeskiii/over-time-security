@@ -1,0 +1,73 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --color-base: #05070a;
+  --color-surface: #0b0f14;
+  --color-surface-hover: #111827;
+  --color-text-primary: #e6e6e6;
+  --color-text-secondary: #9ca3af;
+  --color-brand-accent: #ff6200;
+  --color-brand-accent-hover: #e65800;
+}
+
+@layer base {
+  * {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  html {
+    height: 100%;
+    overflow: hidden;
+  }
+
+  body {
+    background-color: var(--color-base);
+    color: var(--color-text-primary);
+    height: 100%;
+    overflow: auto;
+    overscroll-behavior: none;
+    touch-action: manipulation;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Safe area support for notched devices */
+  .safe-area-inset-top {
+    padding-top: env(safe-area-inset-top);
+  }
+
+  .safe-area-pb {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  .pb-safe {
+    padding-bottom: calc(env(safe-area-inset-bottom) + 80px);
+  }
+
+  /* Hide scrollbar for Chrome, Safari and Opera */
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Hide scrollbar for IE, Edge and Firefox */
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}
+
+@layer components {
+  /* Big touch targets for one-handed use */
+  .touch-target {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  /* PWA standalone mode optimizations */
+  @media (display-mode: standalone) {
+    body {
+      user-select: none;
+    }
+  }
+}

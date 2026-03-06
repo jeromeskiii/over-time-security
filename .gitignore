@@ -1,7 +1,19 @@
+# Dependencies
 node_modules
+.pnpm-store
+
+# Build outputs
 dist
 dist-ssr
 *.local
+
+# Next.js
+.next
+out
+build
+
+# Turborepo
+.turbo
 
 # IDE
 .idea
@@ -16,8 +28,29 @@ dist-ssr
 .kilocode
 metadata.json
 
-# logs
+# Environment files
+.env
+.env.local
+.env.*.local
+packages/db/.env
+
+# Logs
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-AGENTS.md
+pnpm-debug.log*
+
+# TypeScript
+*.tsbuildinfo
+
+# Testing
+coverage
+
+# Old structure (to be removed)
+/backend/
+/src/
+/public/
+/index.html
+/server.js
+/vite.config.ts
+/AGENTS.md
