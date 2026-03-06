@@ -213,3 +213,87 @@ Apps interact with automation by calling workflow functions:
 | `handlePatrolMiss(bus, data)` | Checkpoint window expired | Alert chain |
 
 All workflow functions accept an `EventBus` instance (created via `createEventBus()`) and a data payload. The EventBus handles persistence, routing, and queue dispatch internally.
+
+---
+
+## Implementation Status
+
+Legend: ✅ Implemented | 🚧 In Progress | 📋 Planned
+
+### Apps
+
+| App | Auth | Data | Workflows | Status |
+|-----|------|------|-----------|--------|
+| `apps/web` | None (public) | ✅ Leads API | ✅ Lead intake | Production-ready |
+| `apps/ops` | ✅ JWT + middleware | ✅ Data adapters | 📋 Dashboard actions | Active development |
+| `apps/guard` | ✅ Phone/OTP/PIN | ✅ Offline storage | ✅ Incident/Patrol/Check-in | Active development |
+
+### Packages
+
+| Package | Core | Tests | Status |
+|---------|------|-------|--------|
+| `packages/domain` | ✅ Types, validators, RBAC | ✅ Unit tests | Stable |
+| `packages/db` | ✅ Prisma schema | 📋 Migrations | Stable |
+| `packages/auth` | ✅ JWT, session, login flows | 📋 Integration tests | Active development |
+| `packages/automation` | ✅ EventBus, workers | ✅ Workflow tests | Active development |
+| `packages/ui` | ✅ Primitives, tokens | 📋 Component tests | Stable |
+
+### Automation Features
+
+| Feature | Event | Worker | Tests | Status |
+|---------|-------|--------|-------|--------|
+| Guard check-in | ✅ | ✅ | ✅ | Complete |
+| Patrol scan | ✅ | ✅ | ✅ | Complete |
+| Patrol miss alert | ✅ | ✅ | 📋 | Complete |
+| Incident report | ✅ | ✅ | ✅ | Complete |
+| Lead intake | ✅ | ✅ | 📋 | Complete |
+| Daily reports | ✅ | 🚧 | 📋 | In Progress |
+| Compliance scoring | ✅ | ✅ | ✅ | Complete |
+
+---
+
+## Runtime Status Matrix
+
+### Ops Portal (`apps/ops`)
+
+| Screen | Feature | Data Source | Status |
+|--------|---------|-------------|--------|
+| `/login` | Email/password auth | ✅ Real (JWT) | Live |
+| `/admin` | Dashboard stats | ✅ Real (API) | Live |
+| `/admin` | Activity feed | ✅ Real (API) | Live |
+| `/admin/guards` | Guard list | ✅ Real (API) | Live |
+| `/admin/sites` | Site list | ✅ Real (API) | Live |
+| `/admin/shifts` | Shift management | ✅ Real (API) | Live |
+| `/admin/reports` | Report list | 📋 Mock → Real | Planned |
+
+### Guard App (`apps/guard`)
+
+| Screen | Feature | Data Source | Status |
+|--------|---------|-------------|--------|
+| `/login` | Phone/OTP/PIN auth | ✅ Real (JWT) | Live |
+| `/home` | Current shift status | ✅ Real (API) | Live |
+| `/patrol` | Checkpoint scanning | ✅ Real (API + Workflow) | Live |
+| `/incident` | Incident reporting | ✅ Real (API + Workflow) | Live |
+| `/shift` | Shift clock in/out | ✅ Real (API + Workflow) | Live |
+| `/profile` | Guard profile | 📋 Local storage | Planned |
+
+### Web Site (`apps/web`)
+
+| Screen | Feature | Data Source | Status |
+|--------|---------|-------------|--------|
+| `/` | Landing page | Static | Live |
+| `/contact` | Lead form | ✅ Real (API + Workflow) | Live |
+| `/services` | Service info | Static | Live |
+
+### API Endpoints
+
+| Endpoint | Method | Auth | Workflow | Status |
+|----------|--------|------|----------|--------|
+| `/api/auth/login` | POST | Public | - | ✅ Live |
+| `/api/auth/session` | GET | Cookie | - | ✅ Live |
+| `/api/auth/logout` | POST | Cookie | - | ✅ Live |
+| `/api/incidents` | POST | Guard | ✅ processNewIncident | ✅ Live |
+| `/api/checkins` | POST | Guard | ✅ processGuardCheckIn | ✅ Live |
+| `/api/patrol` | POST | Guard | ✅ processPatrolScan | ✅ Live |
+| `/api/leads` | POST | Public | ✅ processNewLead | ✅ Live |
+| `/api/dashboard` | GET | Ops | - | ✅ Live |

@@ -10,7 +10,7 @@ export const incidentValidator = z.object({
     'VANDALISM',
     'MEDICAL',
     'FIRE',
-    'SAFETY_HAZARD',
+    'SUSPICIOUS_ACTIVITY',
     'OTHER',
   ]),
   severity: z.enum(['LOW', 'MEDIUM', 'HIGH', 'CRITICAL']),

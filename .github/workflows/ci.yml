@@ -7,6 +7,47 @@ on:
     branches: [main]
 
 jobs:
+  workspace-quality:
+    name: Workspace Quality
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      # Cache the generated Prisma client keyed on schema content.
+      # On a cache hit the generate step is skipped, saving ~10-15s per job.
+      - name: Cache Prisma generated client
+        id: prisma-cache
+        uses: actions/cache@v5
+        with:
+          path: '**/node_modules/.prisma'
+          key: prisma-${{ runner.os }}-${{ hashFiles('packages/db/prisma/schema.prisma') }}
+
+      - name: Ops Type Check
+        run: pnpm --filter @ots/ops typecheck
+
+      - name: Guard Type Check
+        run: pnpm --filter @ots/guard typecheck
+
+      - name: Domain Type Check
+        run: pnpm --filter @ots/domain typecheck
+
+      - name: Domain Tests
+        run: pnpm --filter @ots/domain test
+
+      - name: Automation Type Check
+        run: pnpm --filter @ots/automation typecheck
+
   web-typecheck:
     name: Web Type Check
     runs-on: ubuntu-latest
@@ -65,3 +106,63 @@ jobs:
 
       - name: Build
         run: pnpm --filter @ots/web build
+
+  ops-build:
+    name: Ops Build
+    runs-on: ubuntu-latest
+    needs: workspace-quality
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Cache Prisma generated client
+        id: prisma-cache
+        uses: actions/cache@v5
+        with:
+          path: '**/node_modules/.prisma'
+          key: prisma-${{ runner.os }}-${{ hashFiles('packages/db/prisma/schema.prisma') }}
+
+      - name: Build
+        run: pnpm --filter @ots/ops build
+        env:
+          NEXT_TELEMETRY_DISABLED: '1'
+
+  guard-build:
+    name: Guard Build
+    runs-on: ubuntu-latest
+    needs: workspace-quality
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Cache Prisma generated client
+        id: prisma-cache
+        uses: actions/cache@v5
+        with:
+          path: '**/node_modules/.prisma'
+          key: prisma-${{ runner.os }}-${{ hashFiles('packages/db/prisma/schema.prisma') }}
+
+      - name: Build
+        run: pnpm --filter @ots/guard build
+        env:
+          NEXT_TELEMETRY_DISABLED: '1'

@@ -1,25 +1,16 @@
 import { Job } from 'bullmq';
 import { prisma } from '@ots/db';
+import { calculateComplianceScore } from '@ots/domain';
 import { createWorker } from './base';
 import { subDays } from 'date-fns';
 import type { RecalculateSiteScoreJob } from '../jobs/types';
+import { createEventBus } from '../factory';
 
-const WEIGHTS = {
-  patrolCompletion: 0.40,
-  incidentFrequency: 0.20,
-  missedCheckIns: 0.25,
-  reportTimeliness: 0.15,
-};
-
-function calculateGrade(score: number): string {
-  if (score >= 90) return 'A';
-  if (score >= 80) return 'B';
-  if (score >= 70) return 'C';
-  if (score >= 60) return 'D';
-  return 'F';
-}
-
-async function calculateSiteScore(siteId: string, periodDays: number = 7): Promise<void> {
+async function calculateSiteScore(
+  siteId: string,
+  eventBus: ReturnType<typeof createEventBus>,
+  periodDays: number = 7
+): Promise<void> {
   const now = new Date();
   const periodStart = subDays(now, periodDays);
 
@@ -38,68 +29,69 @@ async function calculateSiteScore(siteId: string, periodDays: number = 7): Promi
   if (shifts.length === 0) return;
 
   const shiftsWithPatrols = shifts.filter((s) => s.patrolLogs.length > 0).length;
-  const patrolCompletion = (shiftsWithPatrols / shifts.length) * 100;
+  const patrolCompletionRatio = shiftsWithPatrols / shifts.length;
 
   const totalIncidents = shifts.reduce((sum, s) => sum + s.incidents.length, 0);
-  const incidentRate = totalIncidents / shifts.length;
-  const incidentScore = Math.max(0, 100 - incidentRate * 20);
+  const incidentFrequencyRatio = Math.min(1, totalIncidents / shifts.length);
 
-  const shiftsWithCheckIn = shifts.filter((s) =>
-    s.checkIns.length > 0
-  ).length;
-  const checkInRate = (shiftsWithCheckIn / shifts.length) * 100;
+  const shiftsWithCheckIn = shifts.filter((s) => s.checkIns.length > 0).length;
+  const checkInRateRatio = shiftsWithCheckIn / shifts.length;
+  const missedCheckInsRatio = 1 - checkInRateRatio;
 
-  let reportTimeliness = 100;
+  let reportTimelinessRatio = 1;
   if (totalIncidents > 0) {
     const incidentIds = shifts.flatMap((s) => s.incidents.map((i) => i.id));
     const reportsGenerated = await prisma.report.count({
       where: { incidentId: { in: incidentIds } },
     });
-    reportTimeliness = (reportsGenerated / totalIncidents) * 100;
+    reportTimelinessRatio = reportsGenerated / totalIncidents;
   }
 
-  const overallScore =
-    patrolCompletion * WEIGHTS.patrolCompletion +
-    incidentScore * WEIGHTS.incidentFrequency +
-    checkInRate * WEIGHTS.missedCheckIns +
-    reportTimeliness * WEIGHTS.reportTimeliness;
+  const score = calculateComplianceScore({
+    patrolCompletion: patrolCompletionRatio,
+    incidentFrequency: incidentFrequencyRatio,
+    missedCheckIns: missedCheckInsRatio,
+    reportTimeliness: reportTimelinessRatio,
+  });
 
-  const grade = calculateGrade(overallScore);
-
-  await prisma.complianceScore.create({
+  const createdScore = await prisma.complianceScore.create({
     data: {
       siteId,
       periodStart,
       periodEnd: now,
-      patrolCompletion,
-      incidentFrequency: incidentScore,
-      missedCheckIns: checkInRate,
-      reportTimeliness,
-      overallScore,
-      grade,
+      patrolCompletion: patrolCompletionRatio * 100,
+      incidentFrequency: (1 - incidentFrequencyRatio) * 100,
+      missedCheckIns: (1 - missedCheckInsRatio) * 100,
+      reportTimeliness: reportTimelinessRatio * 100,
+      overallScore: score.overallScore * 100,
+      grade: score.grade,
     },
   });
 
-  // Emit event for low scores so the alerts worker can notify the client
-  if (overallScore < 60) {
-    await prisma.event.create({
-      data: {
-        type: 'COMPLIANCE_CALCULATED',
-        entityType: 'site',
-        entityId: siteId,
-        payload: { overallScore, grade, patrolCompletion, checkInRate },
-        actorType: 'SYSTEM',
+  // Emit through EventBus so routing + queue dispatch happen consistently.
+  if (createdScore.overallScore < 60) {
+    await eventBus.emit('COMPLIANCE_CALCULATED', {
+      entityType: 'site',
+      entityId: siteId,
+      payload: {
+        siteId,
+        scoreId: createdScore.id,
+        overallScore: createdScore.overallScore,
+        grade: createdScore.grade,
       },
+      actorType: 'SYSTEM',
     });
   }
 }
 
 export function startComplianceWorker() {
+  const eventBus = createEventBus();
+
   return createWorker(
     { queue: 'compliance', concurrency: 5 },
     {
       'recalculate-site-score': async (job: Job<RecalculateSiteScoreJob>) => {
-        await calculateSiteScore(job.data.siteId);
+        await calculateSiteScore(job.data.siteId, eventBus);
       },
 
       'batch-compliance-recalculation': async (_job: Job) => {
@@ -108,7 +100,7 @@ export function startComplianceWorker() {
         });
 
         for (const site of sites) {
-          await calculateSiteScore(site.id);
+          await calculateSiteScore(site.id, eventBus);
         }
 
         console.log(`[Compliance Worker] Batch recalculation complete for ${sites.length} sites`);

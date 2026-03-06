@@ -11,6 +11,10 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@ots/auth": "workspace:*",
+    "@ots/automation": "workspace:*",
+    "@ots/db": "workspace:*",
+    "@ots/domain": "workspace:*",
     "clsx": "^2.1.1",
     "framer-motion": "^12.35.0",
     "lucide-react": "^0.546.0",

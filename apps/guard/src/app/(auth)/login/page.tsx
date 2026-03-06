@@ -1,12 +1,14 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useState, useEffect } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Shield, Loader2, Phone, Lock, AlertCircle } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 export default function LoginPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const redirect = searchParams.get("redirect") || "/home";
   const [step, setStep] = useState<"phone" | "otp" | "pin">("phone");
   const [phone, setPhone] = useState("");
   const [otp, setOtp] = useState("");
@@ -22,6 +24,12 @@ export default function LoginPage() {
     return `(${numbers.slice(0, 3)}) ${numbers.slice(3, 6)}-${numbers.slice(6)}`;
   };
 
+  useEffect(() => {
+    if (countdown <= 0) return;
+    const timer = setInterval(() => setCountdown((prev) => prev - 1), 1000);
+    return () => clearInterval(timer);
+  }, [countdown]);
+
   const handlePhoneSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const digits = phone.replace(/\D/g, "");
@@ -33,23 +41,27 @@ export default function LoginPage() {
     setIsLoading(true);
     setError("");
 
-    // Simulate sending OTP
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-
-    setIsLoading(false);
-    setStep("otp");
-    setCountdown(60);
-
-    // Countdown timer
-    const timer = setInterval(() => {
-      setCountdown((prev) => {
-        if (prev <= 1) {
-          clearInterval(timer);
-          return 0;
-        }
-        return prev - 1;
+    try {
+      const response = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "request-otp", phone: digits }),
       });
-    }, 1000);
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        setError(data.error || "Failed to send code");
+        return;
+      }
+
+      setStep("otp");
+      setCountdown(60);
+    } catch (err) {
+      setError("Failed to send code. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleOtpSubmit = async (e: React.FormEvent) => {
@@ -62,11 +74,28 @@ export default function LoginPage() {
     setIsLoading(true);
     setError("");
 
-    // Simulate OTP verification
-    await new Promise((resolve) => setTimeout(resolve, 800));
+    try {
+      const response = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "verify-otp", phone: phone.replace(/\D/g, ""), otp }),
+      });
 
-    setIsLoading(false);
-    setStep("pin");
+      const data = await response.json();
+
+      if (!response.ok) {
+        setError(data.error || "Invalid code");
+        return;
+      }
+
+      if (data.requiresPin) {
+        setStep("pin");
+      }
+    } catch (err) {
+      setError("Verification failed. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handlePinSubmit = async (e: React.FormEvent) => {
@@ -79,16 +108,42 @@ export default function LoginPage() {
     setIsLoading(true);
     setError("");
 
-    // Simulate PIN verification
-    await new Promise((resolve) => setTimeout(resolve, 800));
+    try {
+      const response = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "verify-pin", phone: phone.replace(/\D/g, ""), pin }),
+      });
 
-    setIsLoading(false);
-    router.push("/home");
+      const data = await response.json();
+
+      if (!response.ok) {
+        setError(data.error || "Invalid PIN");
+        return;
+      }
+
+      router.push(redirect);
+      router.refresh();
+    } catch (err) {
+      setError("Sign in failed. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  const handleResendOtp = () => {
+  const handleResendOtp = async () => {
     if (countdown > 0) return;
-    setCountdown(60);
+    setIsLoading(true);
+    try {
+      await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "request-otp", phone: phone.replace(/\D/g, "") }),
+      });
+      setCountdown(60);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -179,7 +234,6 @@ export default function LoginPage() {
                         const newOtp = otp.slice(0, i) + value + otp.slice(i + 1);
                         setOtp(newOtp.slice(0, 4));
                         setError("");
-                        // Auto-focus next input
                         if (i < 3 && value) {
                           const nextInput = e.target.parentElement?.querySelector(
                             `input:nth-child(${i + 2})`
