@@ -9,14 +9,9 @@ const nextConfig: NextConfig = {
     ignoreDuringBuilds: true,
   },
   images: {
-    remotePatterns: [
-      {
-        protocol: "https",
-        hostname: "images.unsplash.com",
-      },
-    ],
+    unoptimized: true,
   },
-  transpilePackages: ["@ots/ui", "@ots/domain", "@ots/db"],
+  transpilePackages: ["@ots/ui"],
 };
 
 export default nextConfig;

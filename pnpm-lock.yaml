@@ -90,6 +90,9 @@ importers:
       '@ots/auth':
         specifier: workspace:*
         version: link:../../packages/auth
+      '@ots/automation':
+        specifier: workspace:*
+        version: link:../../packages/automation
       '@ots/db':
         specifier: workspace:*
         version: link:../../packages/db
@@ -163,15 +166,6 @@ importers:
 
   apps/web:
     dependencies:
-      '@ots/automation':
-        specifier: workspace:*
-        version: link:../../packages/automation
-      '@ots/db':
-        specifier: workspace:*
-        version: link:../../packages/db
-      '@ots/domain':
-        specifier: workspace:*
-        version: link:../../packages/domain
       '@ots/ui':
         specifier: workspace:*
         version: link:../../packages/ui
@@ -190,9 +184,6 @@ importers:
       react-dom:
         specifier: ^19.0.0
         version: 19.2.4(react@19.2.4)
-      zod:
-        specifier: ^3.24.2
-        version: 3.25.76
     devDependencies:
       '@types/node':
         specifier: ^22.14.0

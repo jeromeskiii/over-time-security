@@ -2,7 +2,12 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { verifySession } from "@ots/auth";
 
-const publicPaths = ["/login", "/api/auth/login", "/api/auth/session"];
+const publicPaths = [
+  "/login",
+  "/api/auth/login",
+  "/api/auth/session",
+  "/api/leads", // Public endpoint for website contact form
+];
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;

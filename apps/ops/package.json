@@ -13,6 +13,7 @@
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
     "@ots/auth": "workspace:*",
+    "@ots/automation": "workspace:*",
     "@ots/db": "workspace:*",
     "@ots/domain": "workspace:*",
     "@ots/ui": "workspace:*",

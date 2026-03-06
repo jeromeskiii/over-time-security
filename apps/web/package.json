@@ -10,16 +10,12 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@ots/automation": "workspace:*",
-    "@ots/db": "workspace:*",
-    "@ots/domain": "workspace:*",
     "@ots/ui": "workspace:*",
     "lucide-react": "^0.546.0",
     "motion": "^12.23.24",
     "next": "^15.2.1",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0",
-    "zod": "^3.24.2"
+    "react-dom": "^19.0.0"
   },
   "devDependencies": {
     "@types/node": "^22.14.0",
