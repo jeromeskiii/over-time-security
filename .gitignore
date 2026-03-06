@@ -6,6 +6,7 @@ node_modules
 dist
 dist-ssr
 *.local
+.env
 
 # Next.js
 .next
@@ -39,6 +40,7 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
+AGENTS.md
 
 # TypeScript
 *.tsbuildinfo
@@ -46,11 +48,6 @@ pnpm-debug.log*
 # Testing
 coverage
 
-# Old structure (to be removed)
-/backend/
-/src/
-/public/
-/index.html
-/server.js
-/vite.config.ts
-/AGENTS.md
+# Local deploy tooling (machine-specific, never commit)
+ecosystem.config.cjs
+webhook.log
