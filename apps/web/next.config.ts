@@ -3,6 +3,7 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
+  output: "export",
   outputFileTracingRoot: path.join(__dirname, "../.."),
   eslint: {
     ignoreDuringBuilds: true,
