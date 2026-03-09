@@ -1,20 +1,35 @@
 import { SignJWT, jwtVerify, decodeJwt } from "jose";
 import type { Session, SessionUser, AuthTokens } from "./types";
 
-const JWT_SECRET = process.env.JWT_SECRET;
-const JWT_EXPIRES_IN = "7d";
+// Guard tokens are short-lived: one shift (~12 h).
+// Ops tokens cover a standard workday (~8 h).
+const ACCESS_EXPIRES: Record<string, string> = {
+  guard: "12h",
+  admin: "8h",
+  supervisor: "8h",
+  client: "8h",
+};
+const ACCESS_EXPIRES_SECONDS: Record<string, number> = {
+  guard: 12 * 60 * 60,
+  admin: 8 * 60 * 60,
+  supervisor: 8 * 60 * 60,
+  client: 8 * 60 * 60,
+};
 const REFRESH_EXPIRES_IN = "30d";
 
 function getSecretKey(): Uint8Array {
-  if (!JWT_SECRET) {
+  const secret = process.env.JWT_SECRET;
+  if (!secret) {
     throw new Error("JWT_SECRET environment variable is required");
   }
-  return new TextEncoder().encode(JWT_SECRET);
+  return new TextEncoder().encode(secret);
 }
 
 export async function createSession(user: SessionUser): Promise<AuthTokens> {
   const secretKey = getSecretKey();
   const now = Math.floor(Date.now() / 1000);
+  const expiresLabel = ACCESS_EXPIRES[user.role] ?? "8h";
+  const expiresInSeconds = ACCESS_EXPIRES_SECONDS[user.role] ?? 8 * 60 * 60;
 
   const accessToken = await new SignJWT({
     sub: user.id,
@@ -26,7 +41,7 @@ export async function createSession(user: SessionUser): Promise<AuthTokens> {
   })
     .setProtectedHeader({ alg: "HS256" })
     .setIssuedAt(now)
-    .setExpirationTime(JWT_EXPIRES_IN)
+    .setExpirationTime(expiresLabel)
     .sign(secretKey);
 
   const refreshToken = await new SignJWT({
@@ -41,7 +56,7 @@ export async function createSession(user: SessionUser): Promise<AuthTokens> {
   return {
     accessToken,
     refreshToken,
-    expiresIn: 7 * 24 * 60 * 60, // 7 days in seconds
+    expiresIn: expiresInSeconds,
   };
 }
 
@@ -79,31 +94,8 @@ export function decodeToken(token: string): Record<string, unknown> | null {
   }
 }
 
-export async function refreshSession(refreshToken: string): Promise<AuthTokens | null> {
-  try {
-    const secretKey = getSecretKey();
-    const { payload } = await jwtVerify(refreshToken, secretKey);
-
-    if (payload.type !== "refresh" || !payload.sub) {
-      return null;
-    }
-
-    // Return a minimal token - caller should fetch full user data
-    const now = Math.floor(Date.now() / 1000);
-    const accessToken = await new SignJWT({
-      sub: payload.sub,
-      type: "refreshed",
-    })
-      .setProtectedHeader({ alg: "HS256" })
-      .setIssuedAt(now)
-      .setExpirationTime(JWT_EXPIRES_IN)
-      .sign(secretKey);
-
-    return {
-      accessToken,
-      expiresIn: 7 * 24 * 60 * 60,
-    };
-  } catch {
-    return null;
-  }
+// refreshSession intentionally returns null until a proper token-rotation
+// flow with user-lookup is implemented. Callers should re-authenticate.
+export async function refreshSession(_refreshToken: string): Promise<AuthTokens | null> {
+  return null;
 }

@@ -1,42 +1,54 @@
-import { PrismaClient, ActorType } from "@ots/db";
+import { prisma, ActorType } from "@ots/db";
 import { hash, compare } from "bcryptjs";
+import { createHash } from "crypto";
 import type { SessionUser, LoginCredentials, AuthResult } from "./types";
 import { createSession } from "./jwt";
 import type { UserRole } from "@ots/domain";
 
-const prisma = new PrismaClient();
-
-// OTP storage (in production, use Redis with TTL)
-const otpStore = new Map<string, { otp: string; expiresAt: Date }>();
 const PIN_SALT_ROUNDS = 10;
 
 export async function hashPin(pin: string): Promise<string> {
   return hash(pin, PIN_SALT_ROUNDS);
 }
 
-export async function verifyPin(pin: string, hash: string): Promise<boolean> {
-  return compare(pin, hash);
+export async function verifyPin(pin: string, storedHash: string): Promise<boolean> {
+  return compare(pin, storedHash);
 }
 
 export function generateOtp(): string {
   return Math.floor(1000 + Math.random() * 9000).toString();
 }
 
-export function storeOtp(phone: string, otp: string): void {
-  const expiresAt = new Date(Date.now() + 5 * 60 * 1000); // 5 minutes
-  otpStore.set(phone, { otp, expiresAt });
+function hashOtp(otp: string): string {
+  return createHash("sha256").update(otp).digest("hex");
 }
 
-export function verifyOtp(phone: string, otp: string): boolean {
-  const stored = otpStore.get(phone);
-  if (!stored) return false;
-  if (stored.expiresAt < new Date()) {
-    otpStore.delete(phone);
-    return false;
-  }
-  if (stored.otp !== otp) return false;
-  otpStore.delete(phone);
-  return true;
+export async function storeOtp(phone: string, otp: string): Promise<void> {
+  const expiresAt = new Date(Date.now() + 5 * 60 * 1000); // 5 minutes
+  const otpHash = hashOtp(otp);
+
+  // Remove any existing unexpired token for this phone
+  await prisma.verificationToken.deleteMany({ where: { phone } });
+
+  await prisma.verificationToken.create({
+    data: { phone, otpHash, expiresAt },
+  });
+}
+
+export async function verifyOtp(phone: string, otp: string): Promise<boolean> {
+  const record = await prisma.verificationToken.findFirst({
+    where: { phone, expiresAt: { gt: new Date() } },
+    orderBy: { createdAt: "desc" },
+  });
+
+  if (!record) return false;
+
+  const valid = record.otpHash === hashOtp(otp);
+
+  // Always delete after one attempt (success or fail) to prevent brute-force
+  await prisma.verificationToken.delete({ where: { id: record.id } });
+
+  return valid;
 }
 
 // Ops Portal Login (Email + Password)
@@ -44,8 +56,6 @@ export async function loginOpsUser(
   email: string,
   password: string
 ): Promise<AuthResult> {
-  // In production, look up user from database with password hash
-  // For now, we use environment-based admin credentials
   const adminEmail = process.env.ADMIN_EMAIL;
   const adminPassword = process.env.ADMIN_PASSWORD;
 
@@ -61,15 +71,13 @@ export async function loginOpsUser(
       success: true,
       session: {
         user,
-        expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+        expiresAt: new Date(Date.now() + tokens.expiresIn * 1000),
         iat: Math.floor(Date.now() / 1000),
       },
       tokens,
     };
   }
 
-  // Check for supervisor users in database
-  // Note: You'd need a User table with password hashes in production
   return {
     success: false,
     error: "Invalid email or password",
@@ -78,10 +86,8 @@ export async function loginOpsUser(
 
 // Guard App Login (Phone + OTP + PIN)
 export async function initiateGuardLogin(phone: string): Promise<AuthResult> {
-  // Normalize phone number
   const normalizedPhone = phone.replace(/\D/g, "");
 
-  // Look up guard by phone
   const guard = await prisma.guard.findFirst({
     where: { phone: normalizedPhone },
   });
@@ -93,12 +99,13 @@ export async function initiateGuardLogin(phone: string): Promise<AuthResult> {
     };
   }
 
-  // Generate and store OTP
   const otp = generateOtp();
-  storeOtp(normalizedPhone, otp);
+  await storeOtp(normalizedPhone, otp);
 
-  // In production, send OTP via SMS
-  console.log(`[DEV] OTP for ${normalizedPhone}: ${otp}`);
+  // TODO: Send OTP via SMS (Twilio). Remove this log before production.
+  if (process.env.NODE_ENV !== "production") {
+    console.log(`[DEV ONLY] OTP for ${normalizedPhone}: ${otp}`);
+  }
 
   return {
     success: true,
@@ -112,14 +119,13 @@ export async function verifyGuardOtp(
 ): Promise<AuthResult> {
   const normalizedPhone = phone.replace(/\D/g, "");
 
-  if (!verifyOtp(normalizedPhone, otp)) {
+  if (!(await verifyOtp(normalizedPhone, otp))) {
     return {
       success: false,
       error: "Invalid or expired code",
     };
   }
 
-  // OTP verified, now require PIN
   return {
     success: true,
     requiresPin: true,
@@ -137,14 +143,9 @@ export async function verifyGuardPin(
   });
 
   if (!guard) {
-    return {
-      success: false,
-      error: "Account not found",
-    };
+    return { success: false, error: "Account not found" };
   }
 
-  // In production, verify PIN hash from database
-  // For now, accept any 4-digit PIN for active guards
   if (guard.status !== "ACTIVE") {
     return {
       success: false,
@@ -152,9 +153,18 @@ export async function verifyGuardPin(
     };
   }
 
-  // TODO: Add pinHash field to Guard model and verify:
-  // const validPin = await verifyPin(pin, guard.pinHash);
-  // if (!validPin) { ... }
+  if (guard.pinHash) {
+    const validPin = await verifyPin(pin, guard.pinHash);
+    if (!validPin) {
+      return { success: false, error: "Invalid PIN" };
+    }
+  } else {
+    // PIN not yet configured — log a warning but allow login during migration.
+    // TODO: enforce pinHash presence once admin PIN-setup flow is built.
+    console.warn(
+      `[AUTH] Guard ${guard.id} has no pinHash — PIN verification skipped (migration mode)`
+    );
+  }
 
   const user: SessionUser = {
     id: `guard-${guard.id}`,
@@ -166,7 +176,6 @@ export async function verifyGuardPin(
 
   const tokens = await createSession(user);
 
-  // Emit login event for audit
   await prisma.event.create({
     data: {
       type: "GUARD_CHECKED_IN",
@@ -174,7 +183,7 @@ export async function verifyGuardPin(
       entityId: guard.id,
       actorId: guard.id,
       actorType: ActorType.GUARD,
-      payload: { action: "login", phone: normalizedPhone },
+      payload: { action: "login" },
     },
   });
 
@@ -182,14 +191,13 @@ export async function verifyGuardPin(
     success: true,
     session: {
       user,
-      expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+      expiresAt: new Date(Date.now() + tokens.expiresIn * 1000),
       iat: Math.floor(Date.now() / 1000),
     },
     tokens,
   };
 }
 
-// Unified login dispatcher
 export async function login(credentials: LoginCredentials): Promise<AuthResult> {
   if (credentials.email && credentials.password) {
     return loginOpsUser(credentials.email, credentials.password);

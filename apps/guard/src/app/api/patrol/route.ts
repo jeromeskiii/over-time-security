@@ -1,14 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
-import { PrismaClient } from "@ots/db";
+import { prisma } from "@ots/db";
 import { z } from "zod";
 import { processPatrolScan, createEventBus } from "@ots/automation";
-
-const prisma = new PrismaClient();
+import { verifySession } from "@ots/auth";
 
 const patrolScanSchema = z.object({
-  guardId: z.string(),
-  shiftId: z.string(),
-  siteId: z.string(),
+  shiftId: z.string().min(1),
+  siteId: z.string().min(1),
   checkpoint: z.string().min(1),
   latitude: z.number().optional(),
   longitude: z.number().optional(),
@@ -16,11 +14,34 @@ const patrolScanSchema = z.object({
 });
 
 export async function POST(request: NextRequest) {
+  // Derive identity from verified session — never trust client-supplied guardId
+  const token = request.cookies.get("session")?.value;
+  const session = token ? await verifySession(token) : null;
+
+  if (!session?.user.guardId) {
+    return NextResponse.json({ error: "Authentication required" }, { status: 401 });
+  }
+
+  const guardId = session.user.guardId;
+
   try {
     const body = await request.json();
     const data = patrolScanSchema.parse(body);
 
-    // Create patrol log
+    // Verify the shift belongs to this guard
+    const shift = await prisma.shift.findUnique({
+      where: { id: data.shiftId },
+      select: { id: true, guardId: true },
+    });
+
+    if (!shift) {
+      return NextResponse.json({ error: "Shift not found" }, { status: 404 });
+    }
+
+    if (shift.guardId !== guardId) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
+
     const patrolLog = await prisma.patrolLog.create({
       data: {
         shiftId: data.shiftId,
@@ -33,11 +54,10 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    // Emit event for automation
     const eventBus = createEventBus();
     await processPatrolScan(eventBus, {
       shiftId: data.shiftId,
-      guardId: data.guardId,
+      guardId,
       siteId: data.siteId,
       checkpoint: data.checkpoint,
       patrolLogId: patrolLog.id,
@@ -50,7 +70,7 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
-        { error: error.errors[0].message },
+        { error: error.issues[0]?.message ?? "Invalid request" },
         { status: 400 }
       );
     }

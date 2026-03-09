@@ -1,7 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getIncidents } from "@/lib/data";
+import { getSession, unauthorized, checkPermission } from "@/lib/auth";
 
 export async function GET(request: NextRequest) {
+  const session = await getSession(request);
+  if (!session) return unauthorized();
+  const deny = checkPermission(session, "incidents:read");
+  if (deny) return deny;
+
   const { searchParams } = new URL(request.url);
   const guardId = searchParams.get("guardId") ?? undefined;
   const siteId = searchParams.get("siteId") ?? undefined;

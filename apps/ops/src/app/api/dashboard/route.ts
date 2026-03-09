@@ -1,7 +1,13 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { getDashboardStats, getRecentActivity, getActiveShifts, getIncidents } from "@/lib/data";
+import { getSession, unauthorized, checkPermission } from "@/lib/auth";
 
-export async function GET() {
+export async function GET(request: NextRequest) {
+  const session = await getSession(request);
+  if (!session) return unauthorized();
+  const deny = checkPermission(session, "reports:read");
+  if (deny) return deny;
+
   const [stats, activity, shifts, incidents] = await Promise.all([
     getDashboardStats(),
     getRecentActivity({ limit: 10 }),

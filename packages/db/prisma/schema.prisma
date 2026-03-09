@@ -4,6 +4,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 enum LeadStatus {
@@ -115,6 +116,7 @@ model Guard {
   name          String
   licenseNumber String      @unique @map("license_number")
   phone         String
+  pinHash       String?     @map("pin_hash")
   status        GuardStatus @default(ACTIVE)
   createdAt     DateTime    @default(now()) @map("created_at")
   shifts        Shift[]
@@ -289,4 +291,15 @@ model Notification {
   @@index([status])
   @@index([createdAt])
   @@map("notifications")
+}
+
+model VerificationToken {
+  id        String   @id @default(cuid())
+  phone     String
+  otpHash   String   @map("otp_hash")
+  expiresAt DateTime @map("expires_at")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@index([phone])
+  @@map("verification_tokens")
 }
