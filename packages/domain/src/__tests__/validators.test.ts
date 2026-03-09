@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
-import { createLeadSchema, createShiftSchema, createIncidentSchema } from '../validators/index.js';
+import { leadValidator, shiftSchema, incidentValidator } from '../validators/index.js';
 
-describe('createLeadSchema', () => {
+describe('leadValidator', () => {
   const validLead = {
     name: 'Jane Doe',
     email: 'jane@example.com',
@@ -11,46 +11,46 @@ describe('createLeadSchema', () => {
   };
 
   it('accepts a valid lead input', () => {
-    const result = createLeadSchema.safeParse(validLead);
+    const result = leadValidator.safeParse(validLead);
     expect(result.success).toBe(true);
   });
 
   it('accepts an optional company field', () => {
-    const result = createLeadSchema.safeParse({ ...validLead, company: 'Acme Corp' });
+    const result = leadValidator.safeParse({ ...validLead, company: 'Acme Corp' });
     expect(result.success).toBe(true);
     if (result.success) expect(result.data.company).toBe('Acme Corp');
   });
 
   it('rejects a name shorter than 2 characters', () => {
-    const result = createLeadSchema.safeParse({ ...validLead, name: 'J' });
+    const result = leadValidator.safeParse({ ...validLead, name: 'J' });
     expect(result.success).toBe(false);
   });
 
   it('rejects an invalid email address', () => {
-    const result = createLeadSchema.safeParse({ ...validLead, email: 'not-an-email' });
+    const result = leadValidator.safeParse({ ...validLead, email: 'not-an-email' });
     expect(result.success).toBe(false);
   });
 
   it('rejects a message shorter than 10 characters', () => {
-    const result = createLeadSchema.safeParse({ ...validLead, message: 'Too short' });
+    const result = leadValidator.safeParse({ ...validLead, message: 'Too short' });
     expect(result.success).toBe(false);
   });
 
   it('rejects a missing serviceType', () => {
     const { serviceType: _, ...rest } = validLead;
-    const result = createLeadSchema.safeParse(rest);
+    const result = leadValidator.safeParse(rest);
     expect(result.success).toBe(false);
   });
 });
 
-describe('createShiftSchema', () => {
+describe('shiftSchema', () => {
   const now = new Date();
   const later = new Date(now.getTime() + 8 * 60 * 60 * 1000); // +8 hours
   const guardId = 'cm0000000000000000000000a';
   const siteId = 'cm0000000000000000000000b';
 
   it('accepts a valid shift', () => {
-    const result = createShiftSchema.safeParse({
+    const result = shiftSchema.safeParse({
       guardId,
       siteId,
       startTime: now,
@@ -60,7 +60,7 @@ describe('createShiftSchema', () => {
   });
 
   it('rejects when endTime is before startTime', () => {
-    const result = createShiftSchema.safeParse({
+    const result = shiftSchema.safeParse({
       guardId,
       siteId,
       startTime: later,
@@ -73,7 +73,7 @@ describe('createShiftSchema', () => {
   });
 
   it('rejects when endTime equals startTime', () => {
-    const result = createShiftSchema.safeParse({
+    const result = shiftSchema.safeParse({
       guardId,
       siteId,
       startTime: now,
@@ -83,7 +83,7 @@ describe('createShiftSchema', () => {
   });
 
   it('coerces ISO string dates', () => {
-    const result = createShiftSchema.safeParse({
+    const result = shiftSchema.safeParse({
       guardId,
       siteId,
       startTime: now.toISOString(),
@@ -93,23 +93,21 @@ describe('createShiftSchema', () => {
   });
 });
 
-describe('createIncidentSchema', () => {
+describe('incidentValidator', () => {
   const base = {
-    guardId: 'cm0000000000000000000000a',
     siteId: 'cm0000000000000000000000b',
     type: 'THEFT' as const,
     description: 'A laptop was taken from the reception desk.',
     severity: 'HIGH' as const,
-    occurredAt: new Date(),
   };
 
   it('accepts a valid incident', () => {
-    const result = createIncidentSchema.safeParse(base);
+    const result = incidentValidator.safeParse(base);
     expect(result.success).toBe(true);
   });
 
   it('accepts an optional shiftId', () => {
-    const result = createIncidentSchema.safeParse({
+    const result = incidentValidator.safeParse({
       ...base,
       shiftId: 'cm0000000000000000000000c',
     });
@@ -117,17 +115,17 @@ describe('createIncidentSchema', () => {
   });
 
   it('rejects an unknown incident type', () => {
-    const result = createIncidentSchema.safeParse({ ...base, type: 'EXPLOSION' });
+    const result = incidentValidator.safeParse({ ...base, type: 'EXPLOSION' });
     expect(result.success).toBe(false);
   });
 
   it('rejects a description shorter than 10 characters', () => {
-    const result = createIncidentSchema.safeParse({ ...base, description: 'Short' });
+    const result = incidentValidator.safeParse({ ...base, description: 'Short' });
     expect(result.success).toBe(false);
   });
 
   it('rejects an unknown severity level', () => {
-    const result = createIncidentSchema.safeParse({ ...base, severity: 'EXTREME' });
+    const result = incidentValidator.safeParse({ ...base, severity: 'EXTREME' });
     expect(result.success).toBe(false);
   });
 });

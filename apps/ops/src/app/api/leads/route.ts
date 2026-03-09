@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma, LeadStatus } from "@ots/db";
+import { leadValidator } from "@ots/domain/validators";
 import { z } from "zod";
 
 const ORIGINS = [
@@ -7,15 +8,6 @@ const ORIGINS = [
   "https://overtimesecurity.com",
   "https://www.overtimesecurity.com",
 ].filter(Boolean);
-
-const createLeadSchema = z.object({
-  name: z.string().min(2),
-  email: z.string().email(),
-  phone: z.string().min(10),
-  company: z.string().optional(),
-  serviceType: z.string().min(1),
-  message: z.string().min(10),
-});
 
 function corsHeaders(origin: string | null): HeadersInit {
   const allowOrigin = origin && ORIGINS.includes(origin) ? origin : ORIGINS[0] || "*";
@@ -38,7 +30,16 @@ export async function POST(request: NextRequest) {
 
   try {
     const body = await request.json();
-    const data = createLeadSchema.parse(body);
+    const result = leadValidator.safeParse(body);
+
+    if (!result.success) {
+      return NextResponse.json(
+        { error: result.error.issues[0]?.message ?? "Invalid request" },
+        { status: 400, headers: corsHeaders(origin) }
+      );
+    }
+
+    const data = result.data;
 
     const lead = await prisma.lead.create({
       data: {
@@ -79,12 +80,6 @@ export async function POST(request: NextRequest) {
       { headers: corsHeaders(origin) }
     );
   } catch (error) {
-    if (error instanceof z.ZodError) {
-      return NextResponse.json(
-        { error: error.errors[0].message },
-        { status: 400, headers: corsHeaders(origin) }
-      );
-    }
     console.error("Create lead error:", error);
     return NextResponse.json(
       { error: "Failed to submit request" },

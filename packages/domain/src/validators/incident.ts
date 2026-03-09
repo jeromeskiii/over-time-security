@@ -1,22 +1,22 @@
 import { z } from 'zod';
 
+// guardId and siteId ownership are verified server-side via session
 export const incidentValidator = z.object({
-  shiftId: z.string().cuid(),
-  guardId: z.string().cuid(),
   siteId: z.string().cuid(),
+  shiftId: z.string().cuid().optional(),
   type: z.enum([
-    'TRESPASS',
     'THEFT',
     'VANDALISM',
+    'TRESPASS',
     'MEDICAL',
     'FIRE',
     'SUSPICIOUS_ACTIVITY',
     'OTHER',
   ]),
   severity: z.enum(['LOW', 'MEDIUM', 'HIGH', 'CRITICAL']),
-  title: z.string().min(1).max(300),
-  description: z.string().min(1).max(5000),
+  description: z.string().min(10, 'Description must be at least 10 characters').max(5000),
   photoKeys: z.array(z.string()).default([]),
+  occurredAt: z.string().optional(),
 });
 
 export type IncidentInput = z.infer<typeof incidentValidator>;

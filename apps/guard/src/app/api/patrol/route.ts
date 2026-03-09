@@ -1,17 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@ots/db";
-import { z } from "zod";
+import { patrolLogValidator } from "@ots/domain/validators";
 import { processPatrolScan, createEventBus } from "@ots/automation";
 import { verifySession } from "@ots/auth";
-
-const patrolScanSchema = z.object({
-  shiftId: z.string().min(1),
-  siteId: z.string().min(1),
-  checkpoint: z.string().min(1),
-  latitude: z.number().optional(),
-  longitude: z.number().optional(),
-  notes: z.string().optional(),
-});
 
 export async function POST(request: NextRequest) {
   // Derive identity from verified session — never trust client-supplied guardId
@@ -26,7 +17,16 @@ export async function POST(request: NextRequest) {
 
   try {
     const body = await request.json();
-    const data = patrolScanSchema.parse(body);
+    const result = patrolLogValidator.safeParse(body);
+
+    if (!result.success) {
+      return NextResponse.json(
+        { error: result.error.issues[0]?.message ?? "Invalid request" },
+        { status: 400 }
+      );
+    }
+
+    const data = result.data;
 
     // Verify the shift belongs to this guard
     const shift = await prisma.shift.findUnique({
@@ -68,12 +68,6 @@ export async function POST(request: NextRequest) {
       patrolLog: { id: patrolLog.id, timestamp: patrolLog.timestamp },
     });
   } catch (error) {
-    if (error instanceof z.ZodError) {
-      return NextResponse.json(
-        { error: error.issues[0]?.message ?? "Invalid request" },
-        { status: 400 }
-      );
-    }
     console.error("Patrol scan error:", error);
     return NextResponse.json(
       { error: "Failed to record patrol scan" },
@@ -81,3 +75,4 @@ export async function POST(request: NextRequest) {
     );
   }
 }
+

@@ -1,26 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma, IncidentSeverity, IncidentType } from "@ots/db";
-import { z } from "zod";
+import { incidentValidator } from "@ots/domain/validators";
 import { processNewIncident, createEventBus } from "@ots/automation";
 import { verifySession } from "@ots/auth";
-
-const createIncidentSchema = z.object({
-  siteId: z.string().min(1),
-  shiftId: z.string().optional(),
-  type: z.enum([
-    "THEFT",
-    "VANDALISM",
-    "TRESPASS",
-    "MEDICAL",
-    "FIRE",
-    "SUSPICIOUS_ACTIVITY",
-    "OTHER",
-  ]),
-  description: z.string().min(10),
-  severity: z.enum(["LOW", "MEDIUM", "HIGH", "CRITICAL"]),
-  photoKeys: z.array(z.string()).optional(),
-  occurredAt: z.string().optional(),
-});
 
 export async function POST(request: NextRequest) {
   // Derive identity from verified session — never trust client-supplied guardId
@@ -35,7 +17,16 @@ export async function POST(request: NextRequest) {
 
   try {
     const body = await request.json();
-    const data = createIncidentSchema.parse(body);
+    const result = incidentValidator.safeParse(body);
+
+    if (!result.success) {
+      return NextResponse.json(
+        { error: result.error.issues[0]?.message ?? "Invalid request" },
+        { status: 400 }
+      );
+    }
+
+    const data = result.data;
 
     // If a shiftId is provided, verify it belongs to this guard
     if (data.shiftId) {
@@ -57,7 +48,7 @@ export async function POST(request: NextRequest) {
         type: data.type as IncidentType,
         description: data.description,
         severity: data.severity as IncidentSeverity,
-        photoKeys: data.photoKeys ?? [],
+        photoKeys: data.photoKeys,
         occurredAt: data.occurredAt ? new Date(data.occurredAt) : new Date(),
       },
     });
@@ -78,12 +69,6 @@ export async function POST(request: NextRequest) {
       incident: { id: incident.id, createdAt: incident.createdAt },
     });
   } catch (error) {
-    if (error instanceof z.ZodError) {
-      return NextResponse.json(
-        { error: error.issues[0]?.message ?? "Invalid request" },
-        { status: 400 }
-      );
-    }
     console.error("Create incident error:", error);
     return NextResponse.json(
       { error: "Failed to create incident" },
@@ -91,3 +76,4 @@ export async function POST(request: NextRequest) {
     );
   }
 }
+

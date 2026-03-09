@@ -1,17 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@ots/db";
-import { z } from "zod";
+import { checkInValidator } from "@ots/domain/validators";
 import { processGuardCheckIn, createEventBus } from "@ots/automation";
 import { verifySession } from "@ots/auth";
-
-const checkInSchema = z.object({
-  shiftId: z.string().min(1),
-  siteId: z.string().min(1),
-  latitude: z.number().optional(),
-  longitude: z.number().optional(),
-  notes: z.string().optional(),
-  checkInType: z.enum(["CLOCK_IN", "CLOCK_OUT"]),
-});
 
 export async function POST(request: NextRequest) {
   // Derive identity from verified session — never trust client-supplied guardId
@@ -26,7 +17,16 @@ export async function POST(request: NextRequest) {
 
   try {
     const body = await request.json();
-    const data = checkInSchema.parse(body);
+    const result = checkInValidator.safeParse(body);
+
+    if (!result.success) {
+      return NextResponse.json(
+        { error: result.error.issues[0]?.message ?? "Invalid request" },
+        { status: 400 }
+      );
+    }
+
+    const data = result.data;
 
     // Verify the shift belongs to this guard
     const shift = await prisma.shift.findUnique({
@@ -76,12 +76,6 @@ export async function POST(request: NextRequest) {
       checkIn: { id: checkIn.id, timestamp: checkIn.timestamp },
     });
   } catch (error) {
-    if (error instanceof z.ZodError) {
-      return NextResponse.json(
-        { error: error.issues[0]?.message ?? "Invalid request" },
-        { status: 400 }
-      );
-    }
     console.error("Check-in error:", error);
     return NextResponse.json(
       { error: "Failed to record check-in" },
@@ -89,3 +83,4 @@ export async function POST(request: NextRequest) {
     );
   }
 }
+

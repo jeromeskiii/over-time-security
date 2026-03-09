@@ -6,6 +6,7 @@ import type {
   ComplianceCalculatedPayload,
   EventPayloadMap,
 } from '@ots/domain';
+import { EVENT_PAYLOAD_TYPES } from '@ots/domain';
 
 // Contract tests ensure event payloads match expected schema
 describe('Event Payload Contracts', () => {
@@ -123,7 +124,7 @@ describe('Event Payload Contracts', () => {
       ] as const;
 
       for (const eventType of requiredEvents) {
-        expect(eventType in ({} as EventPayloadMap)).toBe(true);
+        expect(eventType in EVENT_PAYLOAD_TYPES).toBe(true);
       }
     });
   });
