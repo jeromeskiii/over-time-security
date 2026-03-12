@@ -105,3 +105,23 @@ export interface EventPayloadMap {
 export type TypedDomainEvent<T extends EventType> = DomainEvent<T> & {
   payload: EventPayloadMap[T];
 };
+
+/**
+ * Runtime mapping of event types to their payload type guards.
+ * Used for contract testing and validation.
+ */
+export const EVENT_PAYLOAD_TYPES: Record<keyof EventPayloadMap, true> = {
+  GUARD_CHECKED_IN: true,
+  GUARD_CHECKED_OUT: true,
+  PATROL_STARTED: true,
+  PATROL_CHECKPOINT_SCANNED: true,
+  PATROL_MISSED_CHECKPOINT: true,
+  INCIDENT_CREATED: true,
+  INCIDENT_ESCALATED: true,
+  SHIFT_STARTED: true,
+  SHIFT_ENDED: true,
+  SHIFT_NO_SHOW: true,
+  REPORT_GENERATED: true,
+  LEAD_CREATED: true,
+  COMPLIANCE_CALCULATED: true,
+};

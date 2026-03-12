@@ -5,6 +5,7 @@
 | Document | Description |
 |----------|-------------|
 | [ARCHITECTURE.md](ARCHITECTURE.md) | Monorepo structure, dependency graph, implementation status |
+| [SYSTEM-SPINE.md](SYSTEM-SPINE.md) | Core production vertical slice (`Client -> Quote -> Shift -> Guard -> Incident -> Report`) |
 | [STYLEGUIDE.md](STYLEGUIDE.md) | Design tokens, typography, component patterns |
 | [PRD.md](PRD.md) | Product requirements |
 
@@ -13,6 +14,7 @@
 | Document | Description |
 |----------|-------------|
 | [RUNBOOK.md](RUNBOOK.md) | Development setup, database ops, troubleshooting |
+| [REPO-STABILIZATION.md](REPO-STABILIZATION.md) | Cleanup checklist to keep repo structure stable |
 | [deployment.md](deployment.md) | Vercel deployment process and configuration |
 | [SECURITY.md](SECURITY.md) | Authentication, data protection, API security |
 

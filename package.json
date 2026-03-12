@@ -3,10 +3,14 @@
   "private": true,
   "version": "0.0.0",
   "license": "UNLICENSED",
-  "packageManager": "pnpm@10.0.0",
+  "packageManager": "pnpm@10.32.1",
   "engines": {
-    "node": "20.x",
+    "node": "20.19.x",
     "pnpm": ">=10"
+  },
+  "volta": {
+    "node": "20.19.0",
+    "pnpm": "10.32.1"
   },
   "scripts": {
     "dev": "turbo dev",
@@ -28,7 +32,8 @@
     "db:seed": "turbo db:seed --filter=@ots/db",
     "workers": "pnpm --filter @ots/automation run workers",
     "workers:dev": "pnpm --filter @ots/automation run workers:dev",
-    "test": "turbo test"
+    "test": "turbo test",
+    "env:verify": "node scripts/verify-env-schema.mjs"
   },
   "devDependencies": {
     "tailwindcss": "^4.1.14",

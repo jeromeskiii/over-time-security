@@ -1,10 +1,28 @@
 import { PrismaClient } from "@ots/db";
-import type { Guard, Shift, Incident, RiskLevel } from "@ots/domain";
+import type { Guard, Shift, Incident, RiskLevel, ReportStatus } from "@ots/domain";
 
 const prisma = new PrismaClient();
 
 type ShiftRow = Shift & { guardName: string; siteName: string };
 type IncidentRow = Incident & { guardName: string; siteName: string };
+type ReportRow = {
+  id: string;
+  incidentId: string;
+  content: string;
+  status: ReportStatus;
+  pdfKey: string | null;
+  sentAt: Date | null;
+  sentTo: string | null;
+  createdAt: Date;
+  incident: {
+    type: string;
+    severity: string;
+    description: string;
+    occurredAt: Date;
+    guard: { name: string };
+    site: { location: string };
+  };
+};
 
 export type DataResult<T> =
   | { success: true; data: T }
@@ -205,6 +223,159 @@ export async function getSites() {
     return { success: true, data: sites };
   } catch (error) {
     return { success: false, error: "Failed to fetch sites" };
+  }
+}
+
+export async function getReports(options?: {
+  status?: string;
+  siteId?: string;
+  incidentId?: string;
+  limit?: number;
+}): Promise<DataResult<ReportRow[]>> {
+  try {
+    const where: any = {};
+    if (options?.status) where.status = options.status;
+    if (options?.incidentId) where.incidentId = options.incidentId;
+    if (options?.siteId) where.incident = { siteId: options.siteId };
+
+    const reports = await prisma.report.findMany({
+      where,
+      include: {
+        incident: {
+          select: {
+            type: true,
+            severity: true,
+            description: true,
+            occurredAt: true,
+            guard: { select: { name: true } },
+            site: { select: { location: true } },
+          },
+        },
+      },
+      orderBy: { createdAt: "desc" },
+      take: options?.limit ?? 50,
+    });
+
+    const rows: ReportRow[] = reports.map((r) => ({
+      id: r.id,
+      incidentId: r.incidentId,
+      content: r.content,
+      status: r.status as ReportStatus,
+      pdfKey: r.pdfKey,
+      sentAt: r.sentAt,
+      sentTo: r.sentTo,
+      createdAt: r.createdAt,
+      incident: {
+        type: r.incident.type,
+        severity: r.incident.severity,
+        description: r.incident.description,
+        occurredAt: r.incident.occurredAt,
+        guard: r.incident.guard,
+        site: r.incident.site,
+      },
+    }));
+
+    return { success: true, data: rows };
+  } catch (error) {
+    console.error("Failed to fetch reports:", error);
+    return { success: false, error: "Failed to fetch reports" };
+  }
+}
+
+export async function getReportById(id: string): Promise<DataResult<ReportRow>> {
+  try {
+    const report = await prisma.report.findUnique({
+      where: { id },
+      include: {
+        incident: {
+          select: {
+            type: true,
+            severity: true,
+            description: true,
+            occurredAt: true,
+            guard: { select: { name: true } },
+            site: { select: { location: true } },
+          },
+        },
+      },
+    });
+    if (!report) {
+      return { success: false, error: "Report not found" };
+    }
+    const row: ReportRow = {
+      id: report.id,
+      incidentId: report.incidentId,
+      content: report.content,
+      status: report.status as ReportStatus,
+      pdfKey: report.pdfKey,
+      sentAt: report.sentAt,
+      sentTo: report.sentTo,
+      createdAt: report.createdAt,
+      incident: {
+        type: report.incident.type,
+        severity: report.incident.severity,
+        description: report.incident.description,
+        occurredAt: report.incident.occurredAt,
+        guard: report.incident.guard,
+        site: report.incident.site,
+      },
+    };
+    return { success: true, data: row };
+  } catch (error) {
+    return { success: false, error: "Failed to fetch report" };
+  }
+}
+
+export async function updateReportStatus(
+  id: string,
+  data: { status: string; sentTo?: string }
+): Promise<DataResult<ReportRow>> {
+  try {
+    const updateData: any = { status: data.status as any };
+    if (data.status === "SENT" && data.sentTo) {
+      updateData.sentTo = data.sentTo;
+      updateData.sentAt = new Date();
+    }
+
+    const report = await prisma.report.update({
+      where: { id },
+      data: updateData,
+      include: {
+        incident: {
+          select: {
+            type: true,
+            severity: true,
+            description: true,
+            occurredAt: true,
+            guard: { select: { name: true } },
+            site: { select: { location: true } },
+          },
+        },
+      },
+    });
+
+    const row: ReportRow = {
+      id: report.id,
+      incidentId: report.incidentId,
+      content: report.content,
+      status: report.status as ReportStatus,
+      pdfKey: report.pdfKey,
+      sentAt: report.sentAt,
+      sentTo: report.sentTo,
+      createdAt: report.createdAt,
+      incident: {
+        type: report.incident.type,
+        severity: report.incident.severity,
+        description: report.incident.description,
+        occurredAt: report.incident.occurredAt,
+        guard: report.incident.guard,
+        site: report.incident.site,
+      },
+    };
+    return { success: true, data: row };
+  } catch (error) {
+    console.error("Failed to update report:", error);
+    return { success: false, error: "Failed to update report" };
   }
 }
 
