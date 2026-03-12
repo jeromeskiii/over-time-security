@@ -2,7 +2,7 @@
 
 import { motion, useReducedMotion } from "motion/react";
 import { Phone, Mail, ArrowRight } from "lucide-react";
-import { revealSide, revealUp, signatureEase, staggerParent } from "@/components/motionSystem";
+import { revealSide, revealUp, signatureEase, staggerParent } from "@/design/motion";
 
 export function FinalCTA() {
   const reducedMotion = useReducedMotion();

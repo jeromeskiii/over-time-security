@@ -3,7 +3,6 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
-  output: "export",
   outputFileTracingRoot: path.join(__dirname, "../.."),
   eslint: {
     ignoreDuringBuilds: true,
@@ -12,6 +11,9 @@ const nextConfig: NextConfig = {
     unoptimized: true,
   },
   transpilePackages: ["@ots/ui"],
+  env: {
+    BUILD_TIMESTAMP: process.env.BUILD_TIMESTAMP || new Date().toISOString(),
+  },
 };
 
 export default nextConfig;

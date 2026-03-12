@@ -5,8 +5,8 @@
   "license": "UNLICENSED",
   "packageManager": "pnpm@10.0.0",
   "engines": {
-    "node": "20.x",
-    "pnpm": ">=10"
+    "node": ">=18",
+    "pnpm": ">=9"
   },
   "scripts": {
     "dev": "turbo dev",

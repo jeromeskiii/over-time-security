@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { motion, useReducedMotion } from "motion/react";
 import { Shield, Car, Flame, Calendar, UserCheck, Map, ArrowRight } from "lucide-react";
-import { revealUp, signatureEase, staggerParent } from "@/components/motionSystem";
+import { revealUp, signatureEase, staggerParent } from "@/design/motion";
 
 const services = [
   {

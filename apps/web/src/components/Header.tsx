@@ -4,7 +4,7 @@ import Link from "next/link";
 import { motion, AnimatePresence } from "motion/react";
 import { Shield, Menu, X, Phone } from "lucide-react";
 import { useEffect, useState } from "react";
-import { signatureEase } from "@/components/motionSystem";
+import { signatureEase } from "@/design/motion";
 
 export function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -28,61 +28,61 @@ export function Header() {
     <header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         isScrolled
-          ? "border-b border-white/10 bg-base/82 backdrop-blur-xl"
+          ? "border-b border-white/10 bg-base/80 backdrop-blur-xl"
           : "bg-transparent"
       }`}
     >
-      <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between gap-6 py-5">
-          <Link href="/" className="flex items-center gap-3">
-            <div className="flex h-11 w-11 items-center justify-center rounded-sm border border-brand-accent/25 bg-brand-accent/10">
-              <Shield className="h-5 w-5 text-brand-accent" strokeWidth={1.6} />
+      <div className="max-w-[1400px] mx-auto px-6 lg:px-8">
+        <div className="flex items-center justify-between gap-6 py-4">
+          <Link href="/" className="flex items-center gap-4 group">
+            <div className="flex h-10 w-10 items-center justify-center border border-brand-accent/25 bg-brand-accent/5 transition-colors group-hover:bg-brand-accent/10">
+              <Shield className="h-5 w-5 text-brand-accent" strokeWidth={1.5} />
             </div>
             <div className="flex flex-col">
-              <span className="font-black text-sm uppercase tracking-[0.32em] text-text-primary sm:text-base">
-                Over Time
+              <span className="font-mono text-xs font-black uppercase tracking-[0.4em] text-text-primary">
+                OVERTIME SECURITY
               </span>
-              <span className="text-[10px] font-bold uppercase tracking-[0.34em] text-text-secondary">
-                California Coverage Network
+              <span className="font-mono text-[9px] font-bold uppercase tracking-[0.2em] text-text-secondary/60">
+                California Operations
               </span>
             </div>
           </Link>
 
-          <nav className="hidden items-center gap-1 rounded-full border border-white/10 bg-white/5 p-1.5 backdrop-blur-sm md:flex">
+          <nav className="hidden items-center gap-1 border border-white/5 bg-white/[0.02] p-1 backdrop-blur-md md:flex">
             {navLinks.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
-                className="rounded-full px-4 py-2 text-[11px] font-bold uppercase tracking-[0.24em] text-text-secondary transition-colors hover:bg-white/10 hover:text-text-primary"
+                className="px-5 py-2 text-[10px] font-bold uppercase tracking-[0.3em] text-text-secondary transition-colors hover:bg-white/5 hover:text-text-primary"
               >
                 {link.label}
               </Link>
             ))}
           </nav>
 
-          <div className="hidden items-center gap-4 md:flex">
+          <div className="hidden items-center gap-6 md:flex">
             <a
               href="tel:5622431678"
-              className="inline-flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.24em] text-text-secondary transition-colors hover:text-text-primary"
+              className="font-mono flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.2em] text-text-secondary transition-colors hover:text-text-primary"
             >
-              <Phone size={14} className="text-brand-accent" />
+              <div className="h-1.5 w-1.5 rounded-full bg-brand-accent animate-pulse" />
               24/7 Dispatch
             </a>
             <Link
               href="#dispatch"
-              className="inline-flex items-center gap-2 rounded-sm bg-brand-accent px-5 py-3 text-xs font-black uppercase tracking-[0.24em] text-white transition-all hover:bg-brand-accent-hover"
+              className="bg-brand-accent px-6 py-3 text-[10px] font-black uppercase tracking-[0.2em] text-white transition-transform hover:scale-[1.02] active:scale-[0.98]"
             >
-              Request Coverage
+              Request Deployment
             </Link>
           </div>
 
           <button
-            className="rounded-sm border border-white/10 bg-white/5 p-2 text-text-secondary transition-colors hover:text-text-primary md:hidden"
+            className="border border-white/10 bg-white/5 p-2 text-text-secondary transition-colors hover:text-text-primary md:hidden"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             aria-label="Toggle site menu"
             aria-expanded={mobileMenuOpen}
           >
-            {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+            {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
           </button>
         </div>
       </div>
@@ -90,38 +90,38 @@ export function Header() {
       <AnimatePresence>
         {mobileMenuOpen && (
           <motion.div
-            initial={{ opacity: 0, y: -12 }}
+            initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -12 }}
-            transition={{ duration: 0.22, ease: signatureEase }}
-            className="border-b border-white/10 bg-base/96 px-4 pb-5 pt-1 backdrop-blur-xl md:hidden"
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.2, ease: signatureEase }}
+            className="border-b border-white/10 bg-base/95 px-6 pb-8 pt-2 backdrop-blur-2xl md:hidden"
           >
-            <nav className="signal-panel rounded-2xl p-4">
-              <div className="space-y-2">
+            <nav className="border border-white/5 bg-white/[0.02] p-4">
+              <div className="flex flex-col gap-2">
                 {navLinks.map((link) => (
                   <Link
                     key={link.href}
                     href={link.href}
-                    className="block rounded-xl border border-transparent px-4 py-3 text-sm font-bold uppercase tracking-[0.22em] text-text-secondary transition-colors hover:border-white/10 hover:bg-white/5 hover:text-text-primary"
+                    className="block border border-transparent px-4 py-4 text-[10px] font-bold uppercase tracking-[0.3em] text-text-secondary transition-colors hover:border-white/5 hover:bg-white/5 hover:text-text-primary"
                     onClick={() => setMobileMenuOpen(false)}
                   >
                     {link.label}
                   </Link>
                 ))}
               </div>
-              <div className="mt-4 grid grid-cols-2 gap-3">
+              <div className="mt-6 grid grid-cols-1 gap-3">
                 <a
                   href="tel:5622431678"
-                  className="inline-flex items-center justify-center rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-[11px] font-black uppercase tracking-[0.24em] text-text-primary"
+                  className="flex items-center justify-center border border-white/10 bg-white/5 py-4 text-[10px] font-black uppercase tracking-[0.2em] text-text-primary"
                 >
                   Call Dispatch
                 </a>
                 <Link
                   href="#dispatch"
-                  className="inline-flex items-center justify-center rounded-xl bg-brand-accent px-4 py-3 text-[11px] font-black uppercase tracking-[0.24em] text-white"
+                  className="flex items-center justify-center bg-brand-accent py-4 text-[10px] font-black uppercase tracking-[0.2em] text-white"
                   onClick={() => setMobileMenuOpen(false)}
                 >
-                  Request Quote
+                  Request Deployment
                 </Link>
               </div>
             </nav>

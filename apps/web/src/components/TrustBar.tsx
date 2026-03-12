@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, useReducedMotion } from "motion/react";
-import { revealUp, signatureEase, staggerParent } from "@/components/motionSystem";
+import { revealUp, signatureEase, staggerParent } from "@/design/motion";
 
 const trustItems = [
   { value: "24/7", label: "Dispatch Coverage" },

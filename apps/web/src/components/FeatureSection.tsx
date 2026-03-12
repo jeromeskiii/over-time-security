@@ -2,7 +2,7 @@
 
 import { motion, useReducedMotion } from "motion/react";
 import { Shield, Clock3, RadioTower, FileCheck2, ArrowRight } from "lucide-react";
-import { revealSide, revealUp, signatureEase, staggerParent } from "@/components/motionSystem";
+import { revealSide, revealUp, signatureEase, staggerParent } from "@/design/motion";
 
 const protocolSteps = [
   "Threat profile and coverage map built before first shift.",

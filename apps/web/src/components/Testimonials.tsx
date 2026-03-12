@@ -2,7 +2,7 @@
 
 import { motion, useReducedMotion } from "motion/react";
 import { Quote } from "lucide-react";
-import { revealUp, signatureEase, staggerParent } from "@/components/motionSystem";
+import { revealUp, signatureEase, staggerParent } from "@/design/motion";
 
 const testimonials = [
   {

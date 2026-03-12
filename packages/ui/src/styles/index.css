@@ -20,6 +20,34 @@
 }
 
 @layer components {
+  /* Design System Section 6: Typography Roles */
+  
+  /* Display: Command Authority */
+  .display {
+    @apply text-[48px] md:text-[72px] font-black leading-[0.95] tracking-tighter uppercase;
+  }
+
+  /* Heading: Operational Grouping */
+  .heading {
+    @apply text-[24px] md:text-[32px] font-bold tracking-tight uppercase;
+  }
+
+  /* Body: Explanation */
+  .body {
+    @apply text-[16px] text-text-secondary uppercase tracking-widest leading-relaxed;
+  }
+
+  /* Label: Module Identity */
+  .label {
+    @apply text-brand-accent font-bold tracking-[0.3em] uppercase text-[10px];
+  }
+
+  /* Meta: Telemetry / Timestamps */
+  .meta {
+    @apply text-[12px] text-text-secondary font-mono tracking-tight opacity-80;
+  }
+
+  /* Legacy Utility Classes (Mapped to new system where possible) */
   .surface-card {
     @apply bg-surface border border-white/5 rounded-sm p-6;
   }
@@ -34,10 +62,6 @@
 
   .heading-md {
     @apply text-[24px] md:text-[32px] font-bold tracking-tight uppercase;
-  }
-
-  .label {
-    @apply text-brand-accent font-bold tracking-[0.3em] uppercase text-[10px];
   }
 
   .body-text {
