@@ -1,31 +1,27 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@ots/db";
 import { dispatchIntakeValidator } from "@ots/domain/validators";
-
-const ORIGINS = [
-  process.env.WEB_APP_URL,
-  "https://overtimesecurity.com",
-  "https://www.overtimesecurity.com",
-].filter(Boolean);
-
-function corsHeaders(origin: string | null): HeadersInit {
-  const allowOrigin = origin && ORIGINS.includes(origin) ? origin : ORIGINS[0] || "*";
-  return {
-    "Access-Control-Allow-Origin": allowOrigin,
-    "Access-Control-Allow-Methods": "POST, OPTIONS",
-    "Access-Control-Allow-Headers": "Content-Type",
-  };
-}
+import { buildPublicCorsHeaders, rejectDisallowedOrigin } from "@/lib/public-api";
 
 export async function OPTIONS(request: NextRequest) {
+  const rejection = rejectDisallowedOrigin(request);
+  if (rejection) {
+    return rejection;
+  }
+
   return new NextResponse(null, {
     status: 204,
-    headers: corsHeaders(request.headers.get("origin")),
+    headers: buildPublicCorsHeaders(request.headers.get("origin")),
   });
 }
 
 export async function POST(request: NextRequest) {
   const origin = request.headers.get("origin");
+  const rejection = rejectDisallowedOrigin(request);
+
+  if (rejection) {
+    return rejection;
+  }
 
   try {
     const body = await request.json();
@@ -34,7 +30,7 @@ export async function POST(request: NextRequest) {
     if (!result.success) {
       return NextResponse.json(
         { error: result.error.issues[0]?.message ?? "Invalid request" },
-        { status: 400, headers: corsHeaders(origin) }
+        { status: 400, headers: buildPublicCorsHeaders(origin) }
       );
     }
 
@@ -81,13 +77,13 @@ ${data.accessNotes ? `Access Notes: ${data.accessNotes}` : ""}`,
 
     return NextResponse.json(
       { success: true, id: dispatchRequest.id },
-      { headers: corsHeaders(origin) }
+      { headers: buildPublicCorsHeaders(origin) }
     );
   } catch (error) {
     console.error("Dispatch intake error:", error);
     return NextResponse.json(
       { error: "Failed to submit request" },
-      { status: 500, headers: corsHeaders(origin) }
+      { status: 500, headers: buildPublicCorsHeaders(origin) }
     );
   }
 }

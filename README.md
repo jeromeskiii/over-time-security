@@ -81,6 +81,8 @@ WEB_APP_URL="http://localhost:3000"
 NEXT_PUBLIC_API_URL="http://localhost:3001"
 ```
 
+On Vercel, set `WEB_APP_URL` on the ops project to the public web origin. Preview deployments from `*.vercel.app` are accepted by the public intake API CORS policy.
+
 ### Database Setup
 
 ```bash
