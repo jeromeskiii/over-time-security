@@ -6,6 +6,7 @@ import { createSession } from "./jwt";
 import type { UserRole } from "@ots/domain";
 
 const PIN_SALT_ROUNDS = 10;
+const OTP_TTL_MINUTES = 5;
 
 export async function hashPin(pin: string): Promise<string> {
   return hash(pin, PIN_SALT_ROUNDS);
@@ -24,7 +25,7 @@ function hashOtp(otp: string): string {
 }
 
 export async function storeOtp(phone: string, otp: string): Promise<void> {
-  const expiresAt = new Date(Date.now() + 5 * 60 * 1000); // 5 minutes
+  const expiresAt = new Date(Date.now() + OTP_TTL_MINUTES * 60 * 1000);
   const otpHash = hashOtp(otp);
 
   // Remove any existing unexpired token for this phone
@@ -32,6 +33,46 @@ export async function storeOtp(phone: string, otp: string): Promise<void> {
 
   await prisma.verificationToken.create({
     data: { phone, otpHash, expiresAt },
+  });
+}
+
+function formatTwilioPhoneNumber(phone: string): string {
+  const digits = phone.replace(/\D/g, "");
+
+  if (digits.length === 10) {
+    return `+1${digits}`;
+  }
+
+  if (digits.length === 11 && digits.startsWith("1")) {
+    return `+${digits}`;
+  }
+
+  throw new Error("Guard phone number must be a valid US number for OTP delivery");
+}
+
+async function sendOtpSms(phone: string, otp: string): Promise<void> {
+  const accountSid = process.env.TWILIO_ACCOUNT_SID;
+  const authToken = process.env.TWILIO_AUTH_TOKEN;
+  const fromNumber = process.env.TWILIO_PHONE_NUMBER;
+
+  if (!accountSid || !authToken || !fromNumber) {
+    if (process.env.NODE_ENV !== "production") {
+      console.log(`[DEV ONLY] OTP for ${phone}: ${otp}`);
+      return;
+    }
+
+    throw new Error(
+      "OTP delivery is not configured. Set TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, and TWILIO_PHONE_NUMBER."
+    );
+  }
+
+  const twilioModule = await import("twilio");
+  const client = twilioModule.default(accountSid, authToken);
+
+  await client.messages.create({
+    to: formatTwilioPhoneNumber(phone),
+    from: fromNumber,
+    body: `Your Over Time Security verification code is ${otp}. It expires in ${OTP_TTL_MINUTES} minutes.`,
   });
 }
 
@@ -101,11 +142,7 @@ export async function initiateGuardLogin(phone: string): Promise<AuthResult> {
 
   const otp = generateOtp();
   await storeOtp(normalizedPhone, otp);
-
-  // TODO: Send OTP via SMS (Twilio). Remove this log before production.
-  if (process.env.NODE_ENV !== "production") {
-    console.log(`[DEV ONLY] OTP for ${normalizedPhone}: ${otp}`);
-  }
+  await sendOtpSms(normalizedPhone, otp);
 
   return {
     success: true,
@@ -159,11 +196,10 @@ export async function verifyGuardPin(
       return { success: false, error: "Invalid PIN" };
     }
   } else {
-    // PIN not yet configured — log a warning but allow login during migration.
-    // TODO: enforce pinHash presence once admin PIN-setup flow is built.
-    console.warn(
-      `[AUTH] Guard ${guard.id} has no pinHash — PIN verification skipped (migration mode)`
-    );
+    return {
+      success: false,
+      error: "PIN setup incomplete. Contact your supervisor before signing in.",
+    };
   }
 
   const user: SessionUser = {

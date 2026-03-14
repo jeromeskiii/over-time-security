@@ -1,5 +1,5 @@
 import * as React from "react";
-import { cn } from "../lib/utils";
+import { cn, motionClasses } from "../lib/utils";
 
 export interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
   hoverable?: boolean;
@@ -11,7 +11,7 @@ const Card = React.forwardRef<HTMLDivElement, CardProps>(
       <div
         className={cn(
           "bg-surface border border-white/5 rounded-sm p-6",
-          hoverable && "hover:border-brand-accent/40 transition-all duration-500 cursor-pointer",
+          hoverable && cn("hover:border-brand-accent/40 cursor-pointer", motionClasses("transition-all duration-500")),
           className
         )}
         ref={ref}

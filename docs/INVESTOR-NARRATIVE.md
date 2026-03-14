@@ -1,11 +1,26 @@
 # Over Time Security — Investor Narrative
 
-## The Strategy
+## Strategic Path
 
-**Phase 1: Security Lead Engine + Ops Stack** (now)
-**Phase 2: AI Security Orchestration Platform** (evolution)
+**Phase 1**: Lead engine dominates local market
+**Phase 2**: Clients forced into ops portal
+**Phase 3**: Ops portal becomes product
+**Phase 4**: AI automates operations
+**Phase 5**: Platform becomes category
 
-Start with customer acquisition. Upsell intelligence.
+**We are between Phase 1 and Phase 2.**
+
+The architecture is already Phase 3. We must bring reality up to architecture.
+
+---
+
+## The Core Product Loop
+
+```
+Client → Coverage Request → Guard Assignment → Incident → Report → Retention
+```
+
+This is the ONE production workflow that drives everything. Everything else is secondary.
 
 ---
 
@@ -17,41 +32,43 @@ Security guard operations are a $50B+ U.S. market running on pen and paper. But 
 - Quote requests take days to process
 - No systematic way to capture, qualify, and close leads
 
-Meanwhile, once they win contracts, they struggle to deliver:
-- Guards no-show, supervisors don't know
-- Clients get reports days late, if at all
-- Compliance is manual and unverifiable
-
 ---
 
 ## The Solution
 
-### Phase 1: Security Lead Engine + Ops Stack
+### Phase 1: Lead Engine (Now)
 
-**Customer acquisition meets operational execution.**
+**Dominate customer acquisition.**
 
-| Component | What It Does |
-|-----------|--------------|
-| **Lead Engine** | SEO-optimized landing pages, instant quote requests, AI-powered estimates |
-| **Ops Stack** | Guard scheduling, incident tracking, basic compliance, client portal |
+- SEO-optimized landing pages for every service + location
+- Instant quote request capture
+- AI-powered estimates delivered in minutes
+- Auto-follow-up sequences (email + SMS)
 
-This is the **balanced startup path**:
-- Dominate customer acquisition first
-- Build operational software to deliver on promises
-- Create recurring revenue from day one
+### Phase 2: Ops Portal (Now)
 
-### Phase 2: AI Security Orchestration Platform
+**Deliver what you sold.**
 
-**Palantir for physical security.**
+- Guard scheduling and assignment
+- Incident tracking and reporting
+- Client portal with real-time visibility
+- Retention through transparency
 
-Once we have the data flowing (leads → contracts → operations), we layer on AI:
+### Phase 3: SaaS Product (Next)
 
-| Layer | Capability |
-|-------|------------|
-| **Automated Dispatch** | AI decides which guard, which shift, which response |
-| **Compliance Intelligence** | Real-time scoring, predictive alerts, audit trails |
-| **Risk Prediction** | Pattern recognition across sites, guards, incidents |
-| **Workforce Intelligence** | Guard performance, reliability scoring, optimal scheduling |
+**Ops portal becomes the product.**
+
+- White-label or branded portal for other security firms
+- Multi-tenant architecture
+- Subscription revenue
+
+### Phase 4: AI Automation (Later)
+
+**Automate operations.**
+
+- AI dispatch decisions
+- Predictive compliance scoring
+- Risk pattern recognition
 
 ---
 
@@ -64,41 +81,10 @@ Leads → Contracts → Operations → Data → AI → Better Leads
 ```
 
 1. Lead engine captures intent
-2. Ops stack captures execution
+2. Ops portal captures execution
 3. AI layer extracts patterns
 4. Better predictions win more business
 5. More data, better AI
-
-Competitors have point solutions. We have the full stack.
-
----
-
-## Product Axis
-
-**Phase 1: Lead Generation + Lightweight Ops**
-
-| App | Purpose |
-|-----|---------|
-| `apps/web` | Marketing site, SEO pages, quote forms, lead capture |
-| `apps/ops` | Scheduling, incident logs, basic reports, client portal |
-| `apps/guard` | Check-in, patrol logging, incident reporting |
-
-**Phase 2: AI Orchestration**
-
-| Package | Capability |
-|---------|------------|
-| `@ots/automation` | Event-driven workflows, alert chains, compliance scoring |
-| `@ots/orchestrator` | AI dispatch decisions, risk prediction, workforce intelligence |
-
----
-
-## Go-to-Market
-
-**Service-first, software-second.**
-
-1. **Phase 1 (Year 1)** — Run a security company. Use our own software. Prove the model.
-2. **Phase 2 (Year 2)** — Sell leads + ops software to other security firms. SaaS revenue.
-3. **Phase 3 (Year 3+)** — Sell AI orchestration to enterprise clients, insurance carriers, property managers.
 
 ---
 
@@ -108,44 +94,19 @@ Competitors have point solutions. We have the full stack.
 - ✅ Ops portal live — dashboard, guard management, shift scheduling
 - ✅ Guard PWA live — check-in, patrol scans, incident reporting
 - ✅ Automation layer — event-driven workflows, compliance scoring, alerts
+- ✅ Reports vertical slice — AI-generated incident reports with approve/send workflow
 
-**Phase 1 infrastructure complete. Ready for customers.**
-
----
-
-## Tech Stack
-
-| Layer | Technology |
-|-------|------------|
-| Framework | Next.js 15 (App Router) |
-| Language | TypeScript 5.8 |
-| Database | PostgreSQL + Prisma |
-| Styling | Tailwind CSS v4 |
-| Monorepo | pnpm + Turborepo |
-| AI | Google Gemini |
-| Queue | BullMQ + Redis |
-| Notifications | Resend (email) + Twilio (SMS) |
+**Phase 1-2 infrastructure complete. Ready to scale customer acquisition.**
 
 ---
 
-## Architecture
+## Go-to-Market
 
-```
-                    @ots/domain (no UI deps)
-                           │
-          ┌────────────────┼────────────────┐
-          │                │                │
-          ▼                ▼                ▼
-      @ots/ui          @ots/db       @ots/automation
-          │                │                │
-          └───────────────┼────────────────┘
-                           │
-          ┌────────────────┼────────────────┐
-          │                │                │
-          ▼                ▼                ▼
-      apps/web        apps/ops        apps/guard
-    (lead gen)      (ops portal)    (field ops)
-```
+**Service company that builds software.**
+
+1. **Use our own software** to deliver security services in California
+2. **Prove the loop**: Lead → Contract → Ops → Retention
+3. **Package and sell** the software to other security firms
 
 ---
 
@@ -153,22 +114,20 @@ Competitors have point solutions. We have the full stack.
 
 We're raising $[X] to:
 
-1. **Scale lead generation** — SEO, content, paid acquisition for security contracts
-2. **Hire 1 engineer** — accelerate ops features (client portal, billing, PDF reports)
-3. **Validate the flywheel** — prove leads → contracts → data → AI loop works
+1. **Scale lead generation** — SEO, content, paid acquisition
+2. **Hire 1 engineer** — accelerate client portal features
+3. **Prove retention** — show clients stay because of operational transparency
 
 ---
 
 ## Why Now
 
-- **Fragmented market** — 10,000+ small security firms, no dominant software player
-- **Service-first advantage** — We run operations, we understand the pain
-- **AI maturity** — LLMs can finally automate quotes, reports, compliance
-
-**Lead with acquisition. Win with operations. Scale with AI.**
+- **Fragmented market** — 10,000+ small security firms, no dominant software
+- **Vertical SaaS wave** — similar playbook to healthcare, legal, field services
+- **AI timing** — LLMs make automation economically viable now
 
 ---
 
 ## One-Liner
 
-> Over Time Security is building the AI-powered operating system for physical security — starting with lead generation, evolving into intelligent orchestration.
+> Over Time Security is the operational transparency platform for security — starting with lead generation, evolving into AI-powered operations.

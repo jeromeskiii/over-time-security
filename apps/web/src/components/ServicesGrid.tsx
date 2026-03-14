@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { motion, useReducedMotion } from "motion/react";
 import { Shield, Car, Flame, Calendar, UserCheck, Map, ArrowRight } from "lucide-react";
-import { revealUp, signatureEase, staggerParent } from "@/components/motionSystem";
+import { revealUp, signatureEase, staggerParent, TypingText } from "@/components/motionSystem";
 
 const services = [
   {
@@ -85,7 +85,7 @@ export function ServicesGrid() {
                   <service.icon size={26} className="text-brand-accent" strokeWidth={1.5} />
                 </div>
                 <span className="text-[10px] font-black uppercase tracking-[0.32em] text-text-secondary">
-                  {service.code}
+                  <TypingText text={service.code} speed={60} />
                 </span>
               </div>
               <h3 className="mt-8 text-[22px] font-black uppercase tracking-[0.08em] text-text-primary">

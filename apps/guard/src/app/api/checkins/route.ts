@@ -1,11 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
-import { prisma } from "@ots/db";
 import { checkInValidator } from "@ots/domain/validators";
-import { processGuardCheckIn, createEventBus } from "@ots/automation";
-import { verifySession } from "@ots/auth";
+import { verifySession } from "@ots/auth/jwt";
+
+export const runtime = 'nodejs';
 
 export async function POST(request: NextRequest) {
-  // Derive identity from verified session — never trust client-supplied guardId
+  const { prisma } = await import("@ots/db");
+  const { processGuardCheckIn, createEventBus } = await import("@ots/automation");
+  
   const token = request.cookies.get("session")?.value;
   const session = token ? await verifySession(token) : null;
 

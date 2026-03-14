@@ -1,15 +1,8 @@
 @import "tailwindcss";
+@import "@ots/ui/styles";
 
 @theme {
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
-
-  --color-base: #05070a;
-  --color-surface: #0b0f14;
-  --color-text-primary: #e6e6e6;
-  --color-text-secondary: #9ca3af;
-  --color-brand-accent: #ff6200;
-  --color-brand-accent-hover: #e65800;
-  --color-secondary-accent: #2563eb;
 }
 
 html {

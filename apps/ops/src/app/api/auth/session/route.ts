@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { verifySession } from "@ots/auth";
+import { verifySession } from "@ots/auth/jwt";
 
 export async function GET(request: NextRequest) {
   const token = request.cookies.get("session")?.value;

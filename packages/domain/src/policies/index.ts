@@ -1,4 +1,5 @@
 import type { ComplianceMetrics, ComplianceScore, LeadStatus, RiskLevel, ShiftRiskInput } from '../models/index.js';
+export * from './rbac.js';
 
 /**
  * Calculates a weighted compliance score for a site over a period.

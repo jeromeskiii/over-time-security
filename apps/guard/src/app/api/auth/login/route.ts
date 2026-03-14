@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-import { initiateGuardLogin, verifyGuardOtp, verifyGuardPin } from "@ots/auth";
 import { z } from "zod";
 
 const requestOtpSchema = z.object({
@@ -16,7 +15,11 @@ const verifyPinSchema = z.object({
   pin: z.string().length(4, "PIN must be 4 digits"),
 });
 
+export const runtime = 'nodejs';
+
 export async function POST(request: NextRequest) {
+  const { initiateGuardLogin, verifyGuardOtp, verifyGuardPin } = await import("@ots/auth");
+  
   try {
     const body = await request.json();
     const { action } = body;

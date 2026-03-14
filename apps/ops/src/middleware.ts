@@ -1,12 +1,13 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { verifySession } from "@ots/auth";
+import { verifySession } from "@ots/auth/jwt";
 
 const publicPaths = [
   "/login",
   "/api/auth/login",
   "/api/auth/session",
   "/api/leads", // Public endpoint for website contact form
+  "/api/dispatch", // Public endpoint for website dispatch intake
 ];
 
 export async function middleware(request: NextRequest) {
@@ -60,13 +61,17 @@ export async function middleware(request: NextRequest) {
     return response;
   }
 
-  // Attach session info to request headers for API routes
-  const response = NextResponse.next();
-  response.headers.set("x-user-id", session.user.id);
-  response.headers.set("x-user-role", session.user.role);
-  response.headers.set("x-user-name", session.user.name);
+  // Attach session info to request headers for API routes (internal only, not sent to client)
+  const requestHeaders = new Headers(request.headers);
+  requestHeaders.set("x-user-id", session.user.id);
+  requestHeaders.set("x-user-role", session.user.role);
+  requestHeaders.set("x-user-name", session.user.name);
 
-  return response;
+  return NextResponse.next({
+    request: {
+      headers: requestHeaders,
+    },
+  });
 }
 
 export const config = {

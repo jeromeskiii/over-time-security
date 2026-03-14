@@ -1,8 +1,10 @@
 @import "tailwindcss";
 
 @theme {
+  /* Typography */
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
 
+  /* Colors - Consolidated from @ots/ui/tokens */
   --color-base: #05070a;
   --color-surface: #0b0f14;
   --color-surface-hover: #111827;
@@ -11,6 +13,16 @@
   --color-brand-accent: #ff6200;
   --color-brand-accent-hover: #e65800;
   --color-secondary-accent: #2563eb;
+
+  /* Border Radii */
+  --radius-sm: 0.125rem;
+  --radius: 0.25rem;
+  --radius-md: 0.375rem;
+  --radius-lg: 0.5rem;
+  --radius-xl: 0.75rem;
+  --radius-2xl: 1rem;
+  --radius-3xl: 1.5rem;
+  --radius-full: 9999px;
 }
 
 @layer base {

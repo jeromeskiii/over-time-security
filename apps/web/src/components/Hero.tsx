@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { motion, useReducedMotion } from "motion/react";
 import { ArrowRight, Phone, Radar, ShieldCheck, Waypoints } from "lucide-react";
-import { revealSide, revealUp, signatureEase, staggerParent } from "@/components/motionSystem";
+import { revealSide, revealUp, signatureEase, staggerParent, NumberFlow } from "@/components/motionSystem";
 
 export function Hero() {
   const reducedMotion = useReducedMotion();
@@ -11,10 +11,10 @@ export function Hero() {
   const panelVariant = revealSide(reducedMotion, 40, 1);
 
   const intelligenceMarks = [
-    "POST ORDERS ATTACHED",
-    "SUPERVISOR ESCALATION READY",
-    "GPS PATROL LOGGING",
-    "CLIENT INCIDENT REPORTS",
+    "ARMED OFFICERS DEPLOYED",
+    "PATROL ROUTES ACTIVE",
+    "INCIDENT REPORTS DELIVERED",
+    "SUPERVISOR ON-CALL 24/7",
   ];
 
   return (
@@ -34,21 +34,20 @@ export function Hero() {
         >
           <div className="mb-8 inline-flex items-center gap-3 rounded-full border border-brand-accent/25 bg-brand-accent/10 px-4 py-2 text-[10px] font-black uppercase tracking-[0.32em] text-brand-accent">
             <Radar size={14} />
-            Coverage Intelligence / California
+            Rapid Security Command
           </div>
 
           <h1 className="max-w-4xl text-[46px] font-black uppercase leading-[0.92] tracking-[-0.05em] text-text-primary md:text-[72px] lg:text-[84px]">
-            Dispatch-level
-            <span className="block bg-gradient-to-r from-text-primary via-white to-brand-accent bg-clip-text text-transparent">
-              security coverage
-            </span>
-            that feels authored,
-            <span className="block text-brand-accent">not outsourced.</span>
+            California
+            <span className="block text-brand-accent">Security Command</span>
+            Dispatch-Grade Coverage
+            <span className="block text-text-secondary">in Under 4 Minutes</span>
           </h1>
 
           <p className="mt-8 max-w-2xl border-l-2 border-brand-accent/65 pl-6 text-[15px] font-medium uppercase leading-8 tracking-[0.18em] text-text-secondary sm:text-[16px]">
-            Armed details, patrol routes, fire watch deployment, and command-center reporting
-            built into one operating rhythm for high-risk properties across California.
+            Armed officers dispatched to high-risk California properties.
+            Patrol routes established. Incident reports delivered.
+            Your coverage plan ready today.
           </p>
 
           <div className="mt-10 flex flex-col gap-4 sm:flex-row">
@@ -56,7 +55,7 @@ export function Hero() {
               href="#dispatch"
               className="inline-flex items-center justify-center gap-3 rounded-sm bg-brand-accent px-8 py-5 text-xs font-black uppercase tracking-[0.24em] text-white transition-all hover:bg-brand-accent-hover"
             >
-              Request Coverage Plan
+              Get Your Coverage Plan
               <ArrowRight size={18} />
             </Link>
             <a
@@ -64,7 +63,7 @@ export function Hero() {
               className="inline-flex items-center justify-center gap-3 rounded-sm border border-white/15 bg-white/5 px-8 py-5 text-xs font-black uppercase tracking-[0.24em] text-text-primary transition-colors hover:border-white/30 hover:bg-white/10"
             >
               <Phone size={16} className="text-brand-accent" />
-              Call 24/7 Dispatch
+              Call Dispatch Now
             </a>
           </div>
 
@@ -87,94 +86,131 @@ export function Hero() {
           </motion.div>
         </motion.div>
 
-        <motion.div
-          initial="hidden"
-          animate="visible"
-          variants={panelVariant}
-          transition={{ duration: 0.7, delay: 0.08, ease: signatureEase }}
-          className="relative z-10"
-        >
-          <div className="signal-panel rounded-[32px] p-6 sm:p-8">
-            <div className="flex items-center justify-between border-b border-white/10 pb-5">
-              <div>
-                <p className="text-[10px] font-black uppercase tracking-[0.32em] text-brand-accent">
-                  Coverage Mesh
-                </p>
-                <p className="mt-2 text-lg font-black uppercase tracking-[0.14em] text-text-primary">
-                  Active Command Surface
-                </p>
-              </div>
-              <div className="rounded-full border border-emerald-400/25 bg-emerald-400/10 px-3 py-1 text-[10px] font-black uppercase tracking-[0.24em] text-emerald-300">
-                Monitoring live
-              </div>
-            </div>
-
-            <div className="relative mt-8 overflow-hidden rounded-[28px] border border-white/10 bg-base/80 p-6">
-              <div className="pointer-events-none absolute inset-0 signal-grid opacity-[0.18]" />
-              <div
-                className="pointer-events-none absolute left-1/2 top-1/2 h-[22rem] w-[22rem] -translate-x-1/2 -translate-y-1/2 rounded-full border border-brand-accent/20"
-                style={reducedMotion ? undefined : { animation: "soft-float 10s ease-in-out infinite" }}
-              />
-              <motion.div
-                aria-hidden
-                animate={reducedMotion ? undefined : { rotate: 360 }}
-                transition={reducedMotion ? undefined : { duration: 18, repeat: Infinity, ease: "linear" }}
-                className="pointer-events-none absolute left-1/2 top-1/2 h-[16rem] w-[16rem] -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/10"
+<motion.div
+                initial="hidden"
+                animate="visible"
+                variants={panelVariant}
+                transition={{ duration: 0.7, delay: 0.08, ease: signatureEase }}
+                className="relative z-10"
               >
-                <div className="absolute left-1/2 top-0 h-3 w-3 -translate-x-1/2 -translate-y-1/2 rounded-full bg-brand-accent shadow-[0_0_16px_rgba(255,98,0,0.75)]" />
-                <div className="absolute bottom-0 left-1/2 h-2 w-2 -translate-x-1/2 translate-y-1/2 rounded-full bg-white/70" />
-              </motion.div>
-
-              <motion.div
-                aria-hidden
-                animate={reducedMotion ? undefined : { rotate: -360 }}
-                transition={reducedMotion ? undefined : { duration: 11, repeat: Infinity, ease: "linear" }}
-                className="pointer-events-none absolute left-1/2 top-1/2 h-[10rem] w-[10rem] -translate-x-1/2 -translate-y-1/2 rounded-full border border-brand-accent/35"
-              >
-                <div className="absolute right-0 top-1/2 h-2 w-2 translate-x-1/2 -translate-y-1/2 rounded-full bg-brand-accent" />
-              </motion.div>
-
-              <div className="relative z-10 grid gap-4 sm:grid-cols-2">
-                {[
-                  { label: "Dispatch Window", value: "< 60 min" },
-                  { label: "Coverage Mode", value: "Armed / Patrol / Fire Watch" },
-                  { label: "Supervisor Loop", value: "Escalation attached" },
-                  { label: "Site Reporting", value: "Digital shift logs" },
-                ].map((item) => (
-                  <div
-                    key={item.label}
-                    className="rounded-2xl border border-white/10 bg-white/[0.03] p-4 backdrop-blur-sm"
-                  >
-                    <p className="text-[10px] font-black uppercase tracking-[0.28em] text-brand-accent">
-                      {item.label}
-                    </p>
-                    <p className="mt-3 text-sm font-black uppercase tracking-[0.14em] text-text-primary">
-                      {item.value}
-                    </p>
+                <div className="signal-panel rounded-[32px] p-6 sm:p-8">
+                  <div className="flex items-center justify-between border-b border-white/10 pb-5">
+                    <div>
+                      <p className="text-[10px] font-black uppercase tracking-[0.32em] text-brand-accent">
+                        Command Status
+                      </p>
+                      <p className="mt-2 text-lg font-black uppercase tracking-[0.14em] text-text-primary">
+                        Ready to Deploy
+                      </p>
+                    </div>
+                    <div className="rounded-full border border-emerald-400/25 bg-emerald-400/10 px-3 py-1 text-[10px] font-black uppercase tracking-[0.24em] text-emerald-300">
+                      Dispatch Active
+                    </div>
                   </div>
-                ))}
-              </div>
 
-              <div className="relative z-10 mt-6 grid gap-3 sm:grid-cols-3">
-                {[
-                  { icon: ShieldCheck, label: "POST ORDERS", tone: "text-emerald-300" },
-                  { icon: Waypoints, label: "PATROL ROUTES", tone: "text-text-primary" },
-                  { icon: Radar, label: "INCIDENT SIGNALS", tone: "text-brand-accent" },
-                ].map(({ icon: Icon, label, tone }) => (
-                  <div
-                    key={label}
-                    className="rounded-2xl border border-white/10 bg-base/70 px-4 py-3"
-                  >
-                    <Icon size={18} className={tone} strokeWidth={1.6} />
-                    <p className="mt-3 text-[10px] font-black uppercase tracking-[0.26em] text-text-secondary">
-                      {label}
-                    </p>
+                  <div className="relative mt-8 overflow-hidden rounded-[28px] border border-white/10 bg-base/80 p-6">
+                    <div className="pointer-events-none absolute inset-0 signal-grid opacity-[0.18]" />
+                    <div
+                      className="pointer-events-none absolute left-1/2 top-1/2 h-[22rem] w-[22rem] -translate-x-1/2 -translate-y-1/2 rounded-full border border-brand-accent/20"
+                      style={reducedMotion ? undefined : { animation: "soft-float 10s ease-in-out infinite" }}
+                    />
+                    <motion.div
+                      aria-hidden
+                      animate={reducedMotion ? undefined : { rotate: 360 }}
+                      transition={reducedMotion ? undefined : { duration: 18, repeat: Infinity, ease: "linear" }}
+                      className="pointer-events-none absolute left-1/2 top-1/2 h-[16rem] w-[16rem] -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/10"
+                    >
+                      <div className="absolute left-1/2 top-0 h-3 w-3 -translate-x-1/2 -translate-y-1/2 rounded-full bg-brand-accent shadow-[0_0_16px_rgba(255,98,0,0.75)]" />
+                      <div className="absolute bottom-0 left-1/2 h-2 w-2 -translate-x-1/2 translate-y-1/2 rounded-full bg-white/70" />
+                    </motion.div>
+
+                    <motion.div
+                      aria-hidden
+                      animate={reducedMotion ? undefined : { rotate: -360 }}
+                      transition={reducedMotion ? undefined : { duration: 11, repeat: Infinity, ease: "linear" }}
+                      className="pointer-events-none absolute left-1/2 top-1/2 h-[10rem] w-[10rem] -translate-x-1/2 -translate-y-1/2 rounded-full border border-brand-accent/35"
+                    >
+                      <div className="absolute right-0 top-1/2 h-2 w-2 translate-x-1/2 -translate-y-1/2 rounded-full bg-brand-accent" />
+                    </motion.div>
+
+                    <div className="relative z-10 grid gap-4 sm:grid-cols-2">
+                      {[
+                        { label: "Dispatch Time", value: "< 4 minutes" },
+                        { label: "Coverage Type", value: "Armed / Patrol / Fire Watch" },
+                        { label: "Supervision", value: "On-call escalation" },
+                        { label: "Reporting", value: "Digital shift logs" },
+                      ].map((item) => (
+                        <div
+                          key={item.label}
+                          className="rounded-2xl border border-white/10 bg-white/[0.03] p-4 backdrop-blur-sm"
+                        >
+                          <p className="text-[10px] font-black uppercase tracking-[0.28em] text-brand-accent">
+                            {item.label}
+                          </p>
+                          <p className="mt-3 text-sm font-black uppercase tracking-[0.14em] text-text-primary">
+                            {item.value}
+                          </p>
+                        </div>
+                      ))}
+                    </div>
+
+                    <div className="relative z-10 mt-6 grid gap-3 sm:grid-cols-3">
+                      {[
+                        { icon: ShieldCheck, label: "POSTED ORDERS", tone: "text-emerald-300" },
+                        { icon: Waypoints, label: "PATROL LOGS", tone: "text-text-primary" },
+                        { icon: Radar, label: "ALERT SYSTEM", tone: "text-brand-accent" },
+                      ].map(({ icon: Icon, label, tone }) => (
+                        <div
+                          key={label}
+                          className="rounded-2xl border border-white/10 bg-base/70 px-4 py-3"
+                        >
+                          <Icon size={18} className={tone} strokeWidth={1.6} />
+                          <p className="mt-3 text-[10px] font-black uppercase tracking-[0.26em] text-text-secondary">
+                            {label}
+                          </p>
+                        </div>
+                      ))}
+                    </div>
+
+                    <motion.div
+                      initial={{ opacity: 0 }}
+                      whileInView={{ opacity: 1 }}
+                      viewport={{ once: true }}
+                      transition={{ delay: 0.5, duration: 0.5 }}
+                      className="relative z-10 mt-8 grid grid-cols-3 gap-4 rounded-2xl border border-white/10 bg-white/[0.03] p-4"
+                    >
+                      <div className="text-center">
+                        <NumberFlow
+                          value={8}
+                          className="block text-3xl font-black uppercase tracking-wider text-brand-accent"
+                        />
+                        <span className="mt-1 block text-[9px] font-bold uppercase tracking-[0.2em] text-text-secondary">
+                          Years
+                        </span>
+                      </div>
+                      <div className="text-center">
+                        <NumberFlow
+                          value={240}
+                          className="block text-3xl font-black uppercase tracking-wider text-brand-accent"
+                        />
+                        <span className="mt-1 block text-[9px] font-bold uppercase tracking-[0.2em] text-text-secondary">
+                          Guards
+                        </span>
+                      </div>
+                      <div className="text-center">
+                        <NumberFlow
+                          value={98}
+                          format={(n) => `${n}%`}
+                          className="block text-3xl font-black uppercase tracking-wider text-brand-accent"
+                        />
+                        <span className="mt-1 block text-[9px] font-bold uppercase tracking-[0.2em] text-text-secondary">
+                          Uptime
+                        </span>
+                      </div>
+                    </motion.div>
                   </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </motion.div>
+                </div>
+              </motion.div>
       </div>
     </section>
   );

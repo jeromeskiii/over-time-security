@@ -11,7 +11,15 @@ const nextConfig: NextConfig = {
   images: {
     unoptimized: true,
   },
-  transpilePackages: ["@ots/ui"],
+  transpilePackages: ["@ots/ui", "@ots/domain", "@ots/db", "@ots/automation", "@ots/auth"],
+  webpack: (config) => {
+    config.resolve.extensionAlias = {
+      ".js": [".ts", ".tsx", ".js", ".jsx"],
+      ".mjs": [".mts", ".mjs"],
+      ".cjs": [".cts", ".cjs"],
+    };
+    return config;
+  },
 };
 
 export default nextConfig;

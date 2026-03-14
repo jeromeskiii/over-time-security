@@ -1,5 +1,15 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { generateOtp, hashPin, verifyPin } from "../src/service.js";
+import {
+  generateOtp,
+  hashPin,
+  verifyPin,
+  initiateGuardLogin,
+} from "../src/service.js";
+
+const { mockTwilioFactory, mockTwilioCreate } = vi.hoisted(() => ({
+  mockTwilioFactory: vi.fn(),
+  mockTwilioCreate: vi.fn(),
+}));
 
 // Mock @ots/db
 vi.mock("@ots/db", () => ({
@@ -18,6 +28,14 @@ vi.mock("@ots/db", () => ({
     },
   },
   ActorType: { GUARD: "GUARD" },
+}));
+
+vi.mock("twilio", () => ({
+  default: mockTwilioFactory.mockImplementation(() => ({
+    messages: {
+      create: mockTwilioCreate,
+    },
+  })),
 }));
 
 vi.mock("../src/jwt.js", () => ({
@@ -64,9 +82,67 @@ describe("hashPin / verifyPin", () => {
 describe("verifyGuardPin", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    mockTwilioFactory.mockClear();
+    mockTwilioCreate.mockReset();
+    process.env.NODE_ENV = "test";
+    delete process.env.TWILIO_ACCOUNT_SID;
+    delete process.env.TWILIO_AUTH_TOKEN;
+    delete process.env.TWILIO_PHONE_NUMBER;
   });
 
-  it("allows login when guard has no pinHash (migration mode)", async () => {
+  it("sends OTP via Twilio when SMS credentials are configured", async () => {
+    const { prisma } = await import("@ots/db");
+    (prisma.guard.findFirst as ReturnType<typeof vi.fn>).mockResolvedValue({
+      id: "guard-1",
+      name: "Test Guard",
+      phone: "5551234567",
+      status: "ACTIVE",
+      pinHash: "$2a$10$existing",
+    });
+    (prisma.verificationToken.deleteMany as ReturnType<typeof vi.fn>).mockResolvedValue({});
+    (prisma.verificationToken.create as ReturnType<typeof vi.fn>).mockResolvedValue({});
+    mockTwilioCreate.mockResolvedValue({ sid: "SM123" });
+
+    process.env.TWILIO_ACCOUNT_SID = "sid";
+    process.env.TWILIO_AUTH_TOKEN = "token";
+    process.env.TWILIO_PHONE_NUMBER = "+15550001111";
+
+    const result = await initiateGuardLogin("(555) 123-4567");
+
+    expect(result.success).toBe(true);
+    expect(mockTwilioFactory).toHaveBeenCalledWith("sid", "token");
+    expect(mockTwilioCreate).toHaveBeenCalledWith(
+      expect.objectContaining({
+        to: "+15551234567",
+        from: "+15550001111",
+      })
+    );
+  });
+
+  it("logs OTP in non-production when SMS is not configured", async () => {
+    const { prisma } = await import("@ots/db");
+    (prisma.guard.findFirst as ReturnType<typeof vi.fn>).mockResolvedValue({
+      id: "guard-1",
+      name: "Test Guard",
+      phone: "5551234567",
+      status: "ACTIVE",
+      pinHash: "$2a$10$existing",
+    });
+    (prisma.verificationToken.deleteMany as ReturnType<typeof vi.fn>).mockResolvedValue({});
+    (prisma.verificationToken.create as ReturnType<typeof vi.fn>).mockResolvedValue({});
+
+    const logSpy = vi.spyOn(console, "log").mockImplementation(() => {});
+
+    const result = await initiateGuardLogin("5551234567");
+
+    expect(result.success).toBe(true);
+    expect(logSpy).toHaveBeenCalledWith(expect.stringContaining("OTP for 5551234567"));
+    expect(mockTwilioCreate).not.toHaveBeenCalled();
+
+    logSpy.mockRestore();
+  });
+
+  it("rejects login when guard has no pinHash", async () => {
     const { prisma } = await import("@ots/db");
     (prisma.guard.findFirst as ReturnType<typeof vi.fn>).mockResolvedValue({
       id: "guard-1",
@@ -75,12 +151,10 @@ describe("verifyGuardPin", () => {
       status: "ACTIVE",
       pinHash: null,
     });
-    (prisma.event.create as ReturnType<typeof vi.fn>).mockResolvedValue({});
-
     const { verifyGuardPin } = await import("../src/service.js");
     const result = await verifyGuardPin("5551234567", "any-pin");
-    expect(result.success).toBe(true);
-    expect(result.session?.user.role).toBe("guard");
+    expect(result.success).toBe(false);
+    expect(result.error).toMatch(/pin setup incomplete/i);
   });
 
   it("rejects login for SUSPENDED guard", async () => {

@@ -17,6 +17,10 @@ pnpm install
 # Copy environment variables
 cp .env.example .env
 
+# Ensure cross-app URLs match local ports
+# WEB_APP_URL=http://localhost:3000
+# NEXT_PUBLIC_API_URL=http://localhost:3001
+
 # Start infrastructure
 docker compose -f docker/docker-compose.yml up -d
 
@@ -60,6 +64,7 @@ pnpm lint
 - Reference related issues: `Closes #123` or `Fixes #456`
 - Update `.env.example` if adding new environment variables
 - Include DB migration if schema changes
+- Keep `NEXT_PUBLIC_*` values correct for static web builds
 
 ### Commit Messages
 

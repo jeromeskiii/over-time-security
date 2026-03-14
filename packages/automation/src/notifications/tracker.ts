@@ -21,7 +21,7 @@ export async function createNotificationRecord(data: {
       subject: data.subject,
       body: data.body,
       eventId: data.eventId,
-      metadata: data.metadata ?? {},
+      metadata: (data.metadata ?? {}) as object,
       status: 'PENDING',
     },
   });

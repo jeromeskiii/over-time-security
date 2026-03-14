@@ -74,6 +74,13 @@ pnpm install
 cp .env.example .env
 ```
 
+For local development, keep cross-app URLs aligned:
+
+```bash
+WEB_APP_URL="http://localhost:3000"
+NEXT_PUBLIC_API_URL="http://localhost:3001"
+```
+
 ### Database Setup
 
 ```bash
@@ -98,6 +105,8 @@ pnpm dev:web    # Marketing site
 pnpm dev:ops    # Operations portal
 pnpm dev:guard  # Guard mobile app
 ```
+
+The marketing site submits lead and dispatch intake forms to the ops app API. When deploying the static web app, `NEXT_PUBLIC_API_URL` must point at the reachable ops origin for that environment.
 
 ### Build
 

@@ -73,7 +73,7 @@ export async function getShifts(options?: {
       take: options?.limit ?? 50,
     });
 
-    const rows: ShiftRow[] = shifts.map((s) => ({
+    const rows: ShiftRow[] = shifts.map((s: (typeof shifts)[number]) => ({
       id: s.id,
       guardId: s.guardId,
       siteId: s.siteId,
@@ -118,7 +118,7 @@ export async function getIncidents(options?: {
       take: options?.limit ?? 50,
     });
 
-    const rows: IncidentRow[] = incidents.map((i) => ({
+    const rows: IncidentRow[] = incidents.map((i: (typeof incidents)[number]) => ({
       id: i.id,
       guardId: i.guardId,
       siteId: i.siteId,
@@ -153,7 +153,7 @@ export async function getRecentActivity(options?: {
       take: options?.limit ?? 20,
     });
 
-    const activity = events.map((e) => ({
+    const activity = events.map((e: (typeof events)[number]) => ({
       id: e.id,
       title: formatEventTitle(e.type, e.payload as Record<string, unknown>),
       timestamp: formatTimestamp(e.createdAt),
@@ -256,7 +256,7 @@ export async function getReports(options?: {
       take: options?.limit ?? 50,
     });
 
-    const rows: ReportRow[] = reports.map((r) => ({
+    const rows: ReportRow[] = reports.map((r: (typeof reports)[number]) => ({
       id: r.id,
       incidentId: r.incidentId,
       content: r.content,

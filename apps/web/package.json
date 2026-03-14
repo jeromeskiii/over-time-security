@@ -10,6 +10,9 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@ots/automation": "workspace:*",
+    "@ots/db": "workspace:*",
+    "@ots/domain": "workspace:*",
     "@ots/ui": "workspace:*",
     "lucide-react": "^0.546.0",
     "motion": "^12.23.24",

@@ -80,7 +80,7 @@ over-time-security/
 
 - **Web app**: No auth (public marketing site)
 - **Ops app**: Custom JWT auth via `@ots/auth`. Email + password login stored in env vars (admin only today). HTTP-only `session` cookie. Access tokens expire in **8 hours**. All API routes require a valid session and RBAC permission check via `apps/ops/src/lib/auth.ts`.
-- **Guard app**: Phone → OTP → PIN flow via `@ots/auth`. OTPs are SHA-256 hashed and stored in the `VerificationToken` DB table with a 5-minute TTL (single-use). PINs are bcrypt-hashed in `Guard.pinHash` (migration mode allows login without a hash during rollout). Access tokens expire in **12 hours** (one shift). Guard identity is always derived from the verified session — never from the request body.
+- **Guard app**: Phone → OTP → PIN flow via `@ots/auth`. OTPs are SHA-256 hashed and stored in the `VerificationToken` DB table with a 5-minute TTL (single-use). PINs are bcrypt-hashed in `Guard.pinHash`; guards without a configured PIN hash are blocked from login until account setup is completed. Access tokens expire in **12 hours** (one shift). Guard identity is always derived from the verified session — never from the request body.
 
 > **Note**: `next-auth` appears in `apps/ops/package.json` but is **not used**. The ops app uses `@ots/auth` directly. `next-auth` should be removed once confirmed safe.
 
@@ -251,7 +251,7 @@ Legend: ✅ Implemented | 🚧 In Progress | 📋 Planned
 | Patrol miss alert | ✅ | ✅ | 📋 | Complete |
 | Incident report | ✅ | ✅ | ✅ | Complete |
 | Lead intake | ✅ | ✅ | 📋 | Complete |
-| Daily reports | ✅ | 🚧 | 📋 | In Progress |
+| Daily reports | ✅ | ✅ | ✅ | Complete |
 | Compliance scoring | ✅ | ✅ | ✅ | Complete |
 
 ---
@@ -268,7 +268,7 @@ Legend: ✅ Implemented | 🚧 In Progress | 📋 Planned
 | `/admin/guards` | Guard list | ✅ Real (API) | Live |
 | `/admin/sites` | Site list | ✅ Real (API) | Live |
 | `/admin/shifts` | Shift management | ✅ Real (API) | Live |
-| `/admin/reports` | Report list | 📋 Mock → Real | Planned |
+| `/admin/reports` | Report list | ✅ Real (API) | Live |
 
 ### Guard App (`apps/guard`)
 
@@ -279,7 +279,7 @@ Legend: ✅ Implemented | 🚧 In Progress | 📋 Planned
 | `/patrol` | Checkpoint scanning | ✅ Real (API + Workflow) | Live |
 | `/incident` | Incident reporting | ✅ Real (API + Workflow) | Live |
 | `/shift` | Shift clock in/out | ✅ Real (API + Workflow) | Live |
-| `/profile` | Guard profile | 📋 Local storage | Planned |
+| `/profile` | Guard profile | ✅ Local storage | Live |
 
 ### Web Site (`apps/web`)
 
@@ -311,7 +311,6 @@ Legend: ✅ Implemented | 🚧 In Progress | 📋 Planned
 | `build` / `typecheck` root scripts target `@ots/web` only | `build:all` / `typecheck:all` cover the full workspace. The scoped defaults keep the common dev loop fast. |
 | ESLint not run during `next build` | `next build` skips lint for speed. **CI is the lint gate** (`turbo lint`). Do not rely on build output to signal clean lint. |
 | `@ots/orchestrator` not in turbo pipeline | The package is experimental and not wired to any app. Run `pnpm --filter @ots/orchestrator typecheck` independently if needed. |
-| `Guard.pinHash` is nullable | Existing guards without a PIN hash are allowed through during rollout (with a console warning). Set PIN hashes via admin tooling before removing the migration bypass. |
+| `Guard.pinHash` is nullable | The schema still allows `null` during rollout, but login is blocked until a PIN hash is configured for that guard. |
 | `refreshSession` returns null | Token refresh is not implemented. Clients must re-authenticate on expiry. |
 | Ops portal is admin-only today | Supervisor and client RBAC roles are defined and enforced but there is no user table yet — only the env-var admin credential exists. |
-

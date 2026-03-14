@@ -1,11 +1,11 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Shield, Loader2, Phone, Lock, AlertCircle } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
-export default function LoginPage() {
+function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const redirect = searchParams.get("redirect") || "/home";
@@ -353,5 +353,21 @@ export default function LoginPage() {
         </p>
       </div>
     </div>
+  );
+}
+
+function LoginLoading() {
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-base">
+      <Loader2 className="w-8 h-8 animate-spin text-brand-accent" />
+    </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={<LoginLoading />}>
+      <LoginForm />
+    </Suspense>
   );
 }

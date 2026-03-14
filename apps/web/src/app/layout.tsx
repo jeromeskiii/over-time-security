@@ -30,7 +30,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={inter.variable}>
+    <html lang="en" className={`${inter.variable} dark`}>
       <body className="bg-base text-text-primary font-sans antialiased">
         <div className="relative min-h-screen overflow-x-clip">
           <Header />

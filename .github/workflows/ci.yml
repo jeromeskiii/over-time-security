@@ -28,6 +28,9 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Verify environment schema
+        run: pnpm env:verify
+
       # Cache the generated Prisma client keyed on schema content.
       # On a cache hit the generate step is skipped, saving ~10-15s per job.
       - name: Cache Prisma generated client
@@ -71,6 +74,9 @@ jobs:
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
+
+      - name: Verify environment schema
+        run: pnpm env:verify
 
       # Cache the generated Prisma client keyed on schema content.
       # On a cache hit the generate step is skipped, saving ~10-15s per job.
